@@ -22,6 +22,7 @@ public class RegistrationStaff {
 			System.out.println("14. Sign Out");
 			System.out.println("15. Exit");
 			System.out.print("Enter Choice : ");
+			
 			int choice = input.nextInt();
 			switch (choice) {
 			case 1:
