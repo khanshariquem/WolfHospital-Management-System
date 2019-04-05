@@ -16,21 +16,40 @@ public class Index {
 	}
 	
 	public static void homePage(Scanner input) {
-		System.out.println("Welcome to WolfHospital Management System");
-		System.out.println("Please select your role");
 		while (true) {
+			System.out.println("Welcome to WolfHospital Management System");
+			System.out.println("Please select your role");
 			System.out.println("1. Registration Staff");
 			System.out.println("2. Doctor");
 			System.out.println("3. Patient");
 			System.out.println("4. Exit");
 			System.out.print("Enter Choice : ");
 			int choice = input.nextInt();
+			System.out.print("Enter your id : ");
+			int id = input.nextInt();
 			switch (choice) {
 			case 1:
+				User.validateUser(id, Constants.registrationStaffRole);
+				if(User.name == null) {
+					System.out.println("Invalid User..... Try Again!!!");
+					break;
+				}
+				RegistrationStaff.menu(input);
 				break;
 			case 2:
+				User.validateUser(id, Constants.doctorRole);
+				if(User.name == null) {
+					System.out.println("Invalid User..... Try Again!!!");
+					break;
+				}
 				break;
 			case 3:
+				User.validateUser(id, Constants.patientRole);
+				if(User.name == null) {
+					System.out.println("Invalid User..... Try Again!!!");
+					break;
+				}
+				Patient.menu(input);
 				break;
 			case 4:
 				Connector.closeConnection();
