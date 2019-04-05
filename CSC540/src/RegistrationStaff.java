@@ -52,6 +52,7 @@ public class RegistrationStaff {
 			case 13:
 				break;
 			case 14:
+				User.name = null;
 				Index.homePage(input);
 				break;
 			case 15:

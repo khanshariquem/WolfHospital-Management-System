@@ -25,8 +25,11 @@ public class Index {
 			System.out.println("4. Exit");
 			System.out.print("Enter Choice : ");
 			int choice = input.nextInt();
-			System.out.print("Enter your id : ");
-			int id = input.nextInt();
+			int id = 0;
+			if(choice!= 4) {
+				System.out.print("Enter your id : ");
+				id = input.nextInt();
+			}
 			switch (choice) {
 			case 1:
 				User.validateUser(id, Constants.registrationStaffRole);
@@ -42,6 +45,7 @@ public class Index {
 					System.out.println("Invalid User..... Try Again!!!");
 					break;
 				}
+				Doctor.menu(input);
 				break;
 			case 3:
 				User.validateUser(id, Constants.patientRole);
@@ -55,6 +59,7 @@ public class Index {
 				Connector.closeConnection();
 				System.out.println("Thank you for using the application! Hope to see you soon !");
 				System.exit(0);
+				break;
 			default:
 				System.out.println("Enter correct choice");
 			}
