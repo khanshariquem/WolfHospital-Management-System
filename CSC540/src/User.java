@@ -3,6 +3,7 @@ import java.sql.SQLException;
 
 public class User {
 	public static String name;
+	public static String id;
 	
 	public static void validateUser(int id , String role) {
 		switch (role) {
@@ -42,6 +43,7 @@ public class User {
 		try {
 			if(result.next()) {
 				name = result.getString("Name");
+				User.id  = Integer.toString(id);
 			}
 			else
 				name = null;
