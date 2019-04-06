@@ -1,7 +1,9 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class RegistrationStaff {
-	
+		
 	public static void menu(Scanner input) {
 		while (true) {
 			System.out.println("Hi "+User.name+" , Welcome to WolfHospital Management System");
@@ -26,10 +28,17 @@ public class RegistrationStaff {
 			int choice = input.nextInt();
 			switch (choice) {
 			case 1:
+				craeteNewStaff(input);
 				break;
 			case 2:
+				try {
+					craeteNewWard(input);
+				} catch (SQLException e) {
+					//todo
+				}
 				break;
 			case 3:
+				craeteNewPatient(input);
 				break;
 			case 4:
 				break;
@@ -63,6 +72,102 @@ public class RegistrationStaff {
 				System.out.println("Enter correct choice");
 			}
 		}
+	}
+	
+	
+	private static void craeteNewStaff(Scanner input) {
+		try {
+			Connector.createPreparedStatement(Constants.createStaff);
+			String temp = null;
+			System.out.println("Enter Staff Name:");
+			temp = input.next();
+			Connector.setPreparedStatement(1, temp);
+			System.out.println("Enter Staff Address:");
+			temp = input.next();
+			Connector.setPreparedStatement(2, temp);
+			System.out.println("Enter Staff DOB(yyyy-mm-dd):");
+			temp = input.next();
+			Connector.setPreparedStatement(3, temp);
+			System.out.println("Enter Staff Professional Title:");
+			temp = input.next();
+			Connector.setPreparedStatement(4, temp);
+			System.out.println("Enter Staff Phone Number:");
+			temp = input.next();
+			Connector.setPreparedStatement(5, temp);
+			System.out.println("Enter Staff Gender(M/F/NB/U):");
+			temp = input.next();
+			Connector.setPreparedStatement(6, temp);
+			System.out.println("Enter Staff Job Title(RegistrationStaff/Doctor/Nurse):");
+			temp = input.next();
+			Connector.setPreparedStatement(7, temp);
+			System.out.println("Enter Staff Department:");
+			temp = input.next();
+			Connector.setPreparedStatement(8, temp);
+			Connector.executeUpdatePreparedQuery();
+			System.out.println("Staff Registered Successfully");
+		}
+		catch(SQLException e) {
+			//todo
+		}	
+	}
+	
+	private static void craeteNewPatient(Scanner input) {
+		try {
+			Connector.createPreparedStatement(Constants.createPatient);
+			String temp = null;
+			System.out.println("Enter Patient Name:");
+			temp = input.next();
+			Connector.setPreparedStatement(1, temp);
+			System.out.println("Enter Patient DOB(yyyy-mm-dd):");
+			temp = input.next();
+			Connector.setPreparedStatement(2, temp);
+			System.out.println("Enter Patient Address:");
+			temp = input.next();
+			Connector.setPreparedStatement(3, temp);
+			System.out.println("Enter Patient Gender(M/F/NB/U):");
+			temp = input.next();
+			Connector.setPreparedStatement(4, temp);
+			System.out.println("Enter Patient SSN(optional):");
+			temp = input.next();
+			Connector.setPreparedStatement(5, temp);
+			Connector.setPreparedStatement(6, "Ongoing");
+			Connector.setPreparedStatement(7, User.id );
+			Connector.executeUpdatePreparedQuery();
+			System.out.println("Patient Registered Successfully");
+		}
+		catch(SQLException e) {
+			//todo
+		}			
+	}
+	
+	
+	private static void craeteNewWard(Scanner input) throws SQLException {
+		try {
+			Connector.con.setAutoCommit(false);
+		    Connector.createPreparedStatement(Constants.createWard);
+		    String temp = null;
+		    System.out.println("Enter Ward Capacity:");
+		    temp = input.next();
+			Connector.setPreparedStatement(1, temp);
+			System.out.println("Enter Ward Charges:");
+		    temp = input.next();
+			Connector.setPreparedStatement(2, temp);
+			ResultSet result = Connector.executePreparedQuery();
+			char alphabet = 'A';
+			for(int i = 0; i < Integer.parseInt(result.getString("Capacity")); i++ ) {
+				Connector.createPreparedStatement(Constants.createBed);
+				Connector.setPreparedStatement(1, ""+alphabet);
+				Connector.setPreparedStatement(2, result.getString("WardNo"));
+				Connector.setPreparedStatement(3, "Y");
+				Connector.executeUpdatePreparedQuery();
+				alphabet++;
+			}
+			Connector.con.commit();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			Connector.con.rollback();
+		}	
+		Connector.con.setAutoCommit(true);
 	}
 
 }

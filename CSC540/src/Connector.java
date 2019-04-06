@@ -29,56 +29,28 @@ public class Connector {
 			}   	
 	}
 	
-	public static void createStatement() {
-		
-		try{  
-			stmt = con.createStatement();       
-			}
-		catch(Exception e){
-				e.printStackTrace();
-			}   	
+	public static void createStatement() throws SQLException { 
+			stmt = con.createStatement();        	
 	}
 	
-	public static void createPreparedStatement(String query) {
-		
-		try{  
-			prepStmt = con.prepareStatement(query);       
-			}
-		catch(Exception e){
-				e.printStackTrace();
-			}   	
+	public static void createPreparedStatement(String query) throws SQLException {
+			prepStmt = con.prepareStatement(query);          	
 	}
 	
-	public static void setPreparedStatement(int key , String value) {
-		
-		try{  
-			prepStmt.setString(key, value);       
-			}
-		catch(Exception e){
-				e.printStackTrace();
-			}   	
+	public static void setPreparedStatement(int key , String value) throws SQLException {
+			prepStmt.setString(key, value);         	
 	}
 	
-	public static ResultSet executeQuery(String query) {
-		ResultSet result = null;
-		try{ 
-			 result = stmt.executeQuery(query);
-			}
-		catch(Exception e){
-				e.printStackTrace();
-			} 	
-		return result;	
+	public static ResultSet executeQuery(String query) throws SQLException {
+		return stmt.executeQuery(query);
 	}
 	
-	public static ResultSet executePreparedQuery() {
-		ResultSet result = null;
-		try{ 
-			 result = prepStmt.executeQuery();
-			}
-		catch(Exception e){
-				e.printStackTrace();
-			} 	
-		return result;	
+	public static ResultSet executePreparedQuery() throws SQLException {	
+		return prepStmt.executeQuery();	
+	}
+	
+	public static int executeUpdatePreparedQuery() throws SQLException {
+			 return prepStmt.executeUpdate();	
 	}
 
 }

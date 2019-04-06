@@ -21,34 +21,49 @@ public class User {
 	}
 	
 	private static void validatePatient(int id) {
-		Connector.createPreparedStatement(Constants.validatePatient);
-		execute(id);
+		try {
+			Connector.createPreparedStatement(Constants.validatePatient);
+			execute(id);
+		}
+		catch(SQLException e) {
+			//todo
+		}
 		
 	}
 	
 	private static void validateDoctor(int id) {
-		Connector.createPreparedStatement(Constants.validateDoctor);
-		execute(id);
+		try {
+			Connector.createPreparedStatement(Constants.validateDoctor);
+			execute(id);
+		}
+		catch(SQLException e) {
+			//todo
+		}
 	}
 	
 	private static void validateRegistrationStaff(int id) {
-		Connector.createPreparedStatement(Constants.validateRegistrationStaff);
-		execute(id);
+		try {
+			Connector.createPreparedStatement(Constants.validateRegistrationStaff);
+			execute(id);
+		}
+		catch(SQLException e) {
+			//todo
+		}
 		
 	}
 	
 	private static void execute(int id) {
-		Connector.setPreparedStatement(1, Integer.toString(id));
-		ResultSet result = Connector.executePreparedQuery();
 		try {
-			if(result.next()) {
-				name = result.getString("Name");
-				User.id  = Integer.toString(id);
-			}
-			else
-				name = null;
+			Connector.setPreparedStatement(1, Integer.toString(id));
+			ResultSet result = Connector.executePreparedQuery();
+				if(result.next()) {
+					name = result.getString("Name");
+					User.id  = Integer.toString(id);
+				}
+				else
+					name = null;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//todo
 		}
 	}
 	
