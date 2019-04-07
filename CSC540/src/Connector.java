@@ -37,8 +37,24 @@ public class Connector {
 			prepStmt = con.prepareStatement(query);          	
 	}
 	
-	public static void setPreparedStatement(int key , String value) throws SQLException {
+	public static void createPreparedStatementWithKeys(String query) throws SQLException {
+		prepStmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);          	
+	}
+	
+	public static void setPreparedStatementString(int key , String value) throws SQLException {
 			prepStmt.setString(key, value);         	
+	}
+	
+	public static void setPreparedStatementInt(int key , int value) throws SQLException {
+		prepStmt.setInt(key, value);         	
+	}
+	
+	public static void setPreparedStatementFloat(int key , float value) throws SQLException {
+		prepStmt.setFloat(key, value);         	
+	}
+	
+	public static void setPreparedStatementDate(int key , Date value) throws SQLException {
+		prepStmt.setDate(key, value);         	
 	}
 	
 	public static ResultSet executeQuery(String query) throws SQLException {
@@ -50,7 +66,11 @@ public class Connector {
 	}
 	
 	public static int executeUpdatePreparedQuery() throws SQLException {
-			 return prepStmt.executeUpdate();	
+		return prepStmt.executeUpdate();	
+	}
+	
+	public static ResultSet getGeneratedKeys() throws SQLException {
+		return prepStmt.getGeneratedKeys();	
 	}
 
 }

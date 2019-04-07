@@ -55,7 +55,7 @@ public class User {
 	
 	private static void execute(int id) {
 		try {
-			Connector.setPreparedStatement(1, Integer.toString(id));
+			Connector.setPreparedStatementString(1, Integer.toString(id));
 			ResultSet result = Connector.executePreparedQuery();
 				if(result.next()) {
 					name = result.getString("Name");

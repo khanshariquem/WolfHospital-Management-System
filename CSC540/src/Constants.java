@@ -13,4 +13,13 @@ public final class Constants {
 	public static final String createPatient ="insert into Patient(Name, DOB, Address, Gender, SSN, TreatmentStatus, StaffID) values(?,?,?,?,?,?,?)";
 	public static final String createWard ="insert into Ward (Capacity,Charges) values (?, ?)";
 	public static final String createBed = "insert into Bed(BedID, WardNo, Status) values (?,?,?)";
+	public static final String deletePatient = "DELETE FROM Patient WHERE PatientID =?";
+	public static final String deleteStaff = "DELETE FROM Staff WHERE StaffID =?";
+	public static final String reserveBed = "UPDATE Bed SET Status= CASE WHEN Status='Y' THEN 'N' ELSE Status END Where WardNo = ? AND BedID = ?";
+	public static final String releaseBed = "UPDATE Bed SET Status= CASE WHEN Status='N' THEN 'Y' ELSE Status END Where WardNo = ? AND BedID = ?";
+	public static final String assignBed = "INSERT INTO CheckIn (StaffID, PatientID, StartDate, WardNo, BedID) VALUES (?,?,?,?,?,?)";
+	
+	public static final String createBillingRecord = "INSERT INTO BillingRecord(VisitDate, StaffID, PatientID, MedicalRecordID, PaymentMethod, CardNumber, Fees, PayeeSSN, BillingAddress) VALUES (CURDATE(),?,?,?,?,?,?,?,?);";
+	
+	public static final String createMedicalRecord = "INSERT INTO MedicalRecord(StartDate, StaffID, PatientID) values (CURDATE(),?,?);";
 }
