@@ -166,7 +166,8 @@ public class RegistrationStaff {
 		} catch (SQLException e) {
 			// TODO: handle exception
 			Connector.con.rollback();
-		}	
+		}
+		System.out.println("Ward added Successfully");
 		Connector.con.setAutoCommit(true);
 	}
 
