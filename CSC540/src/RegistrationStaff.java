@@ -36,7 +36,7 @@ public class RegistrationStaff {
 				try {
 					createNewWard(input);
 				} catch (SQLException e) {
-					//todo
+					System.out.println(e.getMessage());
 				}
 				break;
 			case 3:
@@ -104,37 +104,21 @@ public class RegistrationStaff {
 			bedId = input.next();
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
 			
-			if(Connector.prepStmt.executeUpdate() == 1)
+			if(Connector.executeUpdatePreparedQuery() == 1)
 				System.out.println("Bed reserved Successfully");
 	        else {
 	        	System.out.println("Error occured while reserving bed, try again");
-	        	RegistrationStaff.menu(input);
 	        }
 	  
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured, try again");
-			RegistrationStaff.menu(input);
+			System.out.println("Error occured, try again"+e.getMessage());
 		}	
-	}
-	
-	private static ResultSet createMedicalRecord(Scanner input, int patientId) throws SQLException{
-		ResultSet result = null;
-		try {
-			Connector.createPreparedStatement(Constants.createMedicalRecord);
-			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-			Connector.setPreparedStatementInt(2, patientId);
-			result = Connector.executePreparedQuery();
-		}
-		catch(SQLException e) {
-			throw e;
-		}
-		return result;	
 	}
 	
 	private static void createBillingRecord(Scanner input) throws SQLException {
 		try {
-			Connector.con.setAutoCommit(false);
+			Connector.setAutoCommit(false);
 			System.out.println("Enter Patient ID:");
 			int patientId = input.nextInt();
 			
@@ -180,21 +164,21 @@ public class RegistrationStaff {
 				Connector.setPreparedStatementString(8, temp);
 			}			
 			Connector.executeUpdatePreparedQuery();
-			Connector.con.commit();
+			Connector.commit();
 			System.out.println("Billing record created successfully");
 		}
 		catch(SQLException e) {
-			Connector.con.rollback();
+			Connector.rollback();
 			System.out.println("Error occured while creating entries" + e.getMessage());
 		}
-		Connector.con.setAutoCommit(true);	
+		Connector.setAutoCommit(true);	
 	}
 	
 	
 	
 	private static void assignBed(Scanner input) throws SQLException{
 		try {
-			Connector.con.setAutoCommit(false);
+			Connector.setAutoCommit(false);
 			Connector.createPreparedStatement(Constants.reserveBed);
 			int wardId;
 			System.out.println("Enter Ward ID:");
@@ -218,11 +202,11 @@ public class RegistrationStaff {
 				temp = input.next();
 				endDate = Date.valueOf(temp);
 			} catch (Exception e) {
-				System.out.println("Invalid date, Try agian");
-				RegistrationStaff.menu(input);
+				System.out.println("Invalid date, Try agian"+e.getMessage());
+				return ;
 			}
 			
-			if(Connector.prepStmt.executeUpdate() == 1) {
+			if(Connector.executeUpdatePreparedQuery() == 1) {
 				Connector.createPreparedStatement(Constants.assignBed);
 				Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
 				Connector.setPreparedStatementInt(2, patientId);
@@ -231,18 +215,19 @@ public class RegistrationStaff {
 				Connector.setPreparedStatementString(5, bedId);
 				Connector.setPreparedStatementDate(6, endDate);
 				Connector.executeUpdatePreparedQuery();
-				Connector.con.commit();
+				Connector.commit();
 			}				
 	        else {
 	        	throw new SQLException();
-	        }
+	        }	
+			System.out.println("Bed assigned Successfully");
 			
 		} catch(SQLException e) {
-			Connector.con.rollback();
-			System.out.println("Error occured while processing the data");
+			Connector.rollback();
+			System.out.println("Error occured while processing the data" + e.getMessage());
 		}
-		Connector.con.setAutoCommit(true);
-		System.out.println("Bed assigned Successfully");
+		Connector.setAutoCommit(true);
+		
 	}
 	
 	
@@ -260,17 +245,14 @@ public class RegistrationStaff {
 			bedId = input.next();
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
 			
-			if(Connector.prepStmt.executeUpdate() == 1)
+			if(Connector.executeUpdatePreparedQuery() == 1)
 				System.out.println("Bed released Successfully");
 	        else {
 	        	System.out.println("Error occured while releasing bed, try again");
-	        	RegistrationStaff.menu(input);
 	        }
-	  
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured, try again");
-			RegistrationStaff.menu(input);
+			System.out.println("Error occured, try again"+e.getMessage());
 		}	
 	}
 	
@@ -286,17 +268,15 @@ public class RegistrationStaff {
 			}
 			Connector.setPreparedStatementInt(1, temp);
 			
-			if(Connector.prepStmt.executeUpdate() == 1)
+			if(Connector.executeUpdatePreparedQuery() == 1)
 				System.out.println("Staff deleted Successfully");
 	        else {
 	        	System.out.println("Error deleting staff, try again");
-	        	RegistrationStaff.menu(input);
 	        }
 	  
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured, try again");
-			RegistrationStaff.menu(input);
+			System.out.println("Error occured, try again"+e.getMessage());
 		}	
 	}
 	
@@ -308,16 +288,14 @@ public class RegistrationStaff {
 			temp = input.nextInt();
 			Connector.setPreparedStatementInt(1, temp);
 			
-			if(Connector.prepStmt.executeUpdate() == 1)
+			if(Connector.executeUpdatePreparedQuery() == 1)
 				System.out.println("Patient deleted Successfully");
 	        else {
 	        	System.out.println("Error deleting patient, try again");
-	        	RegistrationStaff.menu(input);
 	        }
 	  
 		} catch(SQLException e) {
-			System.out.println("Error occured, try again");
-			RegistrationStaff.menu(input);
+			System.out.println("Error occured, try again"+e.getMessage());
 		}	
 	}
 	
@@ -340,8 +318,8 @@ public class RegistrationStaff {
 				Date dob = Date.valueOf(temp);
 				Connector.setPreparedStatementDate(3, dob);
 			} catch (Exception e) {
-				System.out.println("Invalid data, Try agian");
-				RegistrationStaff.menu(input);
+				System.out.println("Invalid data, Try agian"+e.getMessage());
+				return ;
 			}
 			
 			System.out.println("Enter Staff Professional Title:");
@@ -363,7 +341,7 @@ public class RegistrationStaff {
 			System.out.println("Staff Registered Successfully");
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured while processing the data");
+			System.out.println("Error occured while processing the data"+e.getMessage());
 		}	
 	}
 	
@@ -380,8 +358,8 @@ public class RegistrationStaff {
 				Date dob = Date.valueOf(temp);
 				Connector.setPreparedStatementDate(2, dob);
 			} catch (Exception e) {
-				System.out.println("Invalid data, Try agian");
-				RegistrationStaff.menu(input);
+				System.out.println("Invalid data, Try agian"+e.getMessage());
+				return ;
 			}
 			System.out.println("Enter Patient Address:");
 			temp = input.next();
@@ -402,41 +380,46 @@ public class RegistrationStaff {
 			System.out.println("Patient Registered Successfully");
 		}
 		catch(SQLException e) {
-			//todo
-			System.out.println("Error occured while processing the data");
+			System.out.println("Error occured while processing the data "+e.getMessage());
 		}			
 	}
 	
 	
 	private static void createNewWard(Scanner input) throws SQLException {
 		try {
-			Connector.con.setAutoCommit(false);
+			Connector.setAutoCommit(false);
 		    Connector.createPreparedStatement(Constants.createWard);
-		    int temp;
+		    int capacity = 0 , charges = 0;
 		    System.out.println("Enter Ward Capacity:");
-		    temp = input.nextInt();
-			Connector.setPreparedStatementInt(1, temp);
+		    capacity = input.nextInt();
+			Connector.setPreparedStatementInt(1, capacity);
 			System.out.println("Enter Ward Charges:");
-			temp = input.nextInt();
-			Connector.setPreparedStatementInt(2, temp);
-			ResultSet result = Connector.executePreparedQuery();
+			charges = input.nextInt();
+			Connector.setPreparedStatementInt(2, charges);
+			Connector.executeUpdatePreparedQuery();
+			ResultSet rs = Connector.getGeneratedKeys();
+			int wardNo = 0;
+			if(rs.next())
+				wardNo = rs.getInt(1);
+			else
+				throw new SQLException();
 			char alphabet = 'A';
-			for(int i = 0; i < Integer.parseInt(result.getString("Capacity")); i++) {
+			for(int i = 0; i < capacity; i++) {
 				Connector.createPreparedStatement(Constants.createBed);
 				Connector.setPreparedStatementString(1, ""+alphabet);
-				Connector.setPreparedStatementInt(2, result.getInt("WardNo"));
+				Connector.setPreparedStatementInt(2, wardNo);
 				Connector.setPreparedStatementString(3, "Y");
 				Connector.executeUpdatePreparedQuery();
 				alphabet++;
 			}
-			Connector.con.commit();
+			Connector.commit();
+			System.out.println("Ward added Successfully");
 		} catch (SQLException e) {
-			// TODO: handle exception
-			Connector.con.rollback();
-			System.out.println("Error occured while processing the data");
+			Connector.rollback();
+			System.out.println("Error occured while processing the data" + e.getMessage());
 		}
-		Connector.con.setAutoCommit(true);
-		System.out.println("Ward added Successfully");
+		Connector.setAutoCommit(true);
+		
 	}
 
 }

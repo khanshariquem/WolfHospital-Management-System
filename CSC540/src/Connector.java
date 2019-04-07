@@ -1,9 +1,9 @@
 import java.sql.*;
 public class Connector {
 	
-	public static Connection con;
-	public static Statement stmt;
-	public static PreparedStatement prepStmt;	
+	private static Connection con;
+	private static Statement stmt;
+	private static PreparedStatement prepStmt;	
 	private static final String dbServerURL = "jdbc:mariadb://classdb2.csc.ncsu.edu:3306/";
 	private static final String driverName = "org.mariadb.jdbc.Driver";
 	
@@ -33,6 +33,18 @@ public class Connector {
 			stmt = con.createStatement();        	
 	}
 	
+	public static void setAutoCommit(Boolean value) throws SQLException { 
+		con.setAutoCommit(value);
+	}
+	
+	public static void commit() throws SQLException { 
+		con.commit();
+	}
+	
+	public static void rollback() throws SQLException { 
+		con.rollback();
+	}
+
 	public static void createPreparedStatement(String query) throws SQLException {
 			prepStmt = con.prepareStatement(query);          	
 	}
