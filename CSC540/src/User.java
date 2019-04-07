@@ -6,6 +6,7 @@ public class User {
 	public static String id;
 	
 	public static void validateUser(int id , String role) {
+		// handle different roles
 		switch (role) {
 		case Constants.doctorRole:
 			validateDoctor(id);
