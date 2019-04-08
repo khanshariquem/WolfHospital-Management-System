@@ -1,17 +1,24 @@
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Index {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Scanner input = new Scanner(System.in);
-		System.out.println("Enter Database User Name");
-		String userName = input.next();
-		System.out.println("Enter Database Password");
-		String password = input.next();
-		System.out.println("Enter Database to use");
-		String dbName = input.next();
-		Connector.createConnection(dbName, userName, password);	
+		while(true) {
+			System.out.println("Enter Database User Name");
+			String userName = input.next();
+			System.out.println("Enter Database Password");
+			String password = input.next();
+			System.out.println("Enter Database to use");
+			String dbName = input.next();
+			try {
+				Connector.createConnection(dbName, userName, password);
+				break;
+			} catch (Exception e) {
+				System.out.println("Error Occurred.Try again."+e.getMessage());
+			} 	
+		}
 		homePage(input);
 	}
 	

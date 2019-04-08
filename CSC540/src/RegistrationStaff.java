@@ -23,8 +23,11 @@ public class RegistrationStaff {
 			System.out.println("12. Reserve a bed for patient");
 			System.out.println("13. Release a bed");
 			System.out.println("14. Create Billing Record");
-			System.out.println("15. Sign Out");
-			System.out.println("16. Exit");
+			System.out.println("15. Get ward Usage percentage");
+			System.out.println("16. Get current patients for doctor ");
+			System.out.println("17. Get all staff information grouped by role");
+			System.out.println("18. Sign Out");
+			System.out.println("19. Exit");
 			System.out.print("Enter Choice : ");
 			
 			int choice = input.nextInt();
@@ -57,12 +60,13 @@ public class RegistrationStaff {
 				deletePatient(input);
 				break;
 			case 10:
+				checkBedAvailability(input);
 				break;
 			case 11:
 				try {
 					assignBed(input);
 				} catch (SQLException e) {
-					//todo
+					System.out.println(e.getMessage());
 				}
 				break;
 			case 12:
@@ -75,20 +79,163 @@ public class RegistrationStaff {
 				try {
 					createBillingRecord(input);
 				} catch (SQLException e) {
-					//todo
+					System.out.println(e.getMessage());
 				}
 				break;
 			case 15:
+				getWardUsagePercentage();
+				break;
+			case 16:
+				getActivePatientForDoctor(input);
+				break;
+			case 17:
+				getAllStaffs(input);
+				break;
+			case 18:
 				User.name = null;
 				Index.homePage(input);
 				break;
-			case 16:
+			case 19:
 				Connector.closeConnection();
 				System.out.println("Thank you for using the application! Hope to see you soon !");
 				System.exit(0);
 			default:
 				System.out.println("Enter correct choice");
 			}
+		}
+	}
+	
+	private static void getAllStaffs(Scanner input) {
+		
+		try {
+			Connector.createStatement();
+			ResultSet rs = Connector.executeQuery(Constants.getAllStaff);
+			while(rs.next()) {
+				System.out.println("Name: " + rs.getString(2));
+				System.out.println("Address: " + rs.getString(3));
+				System.out.println("DOB: " + rs.getDate(4));
+				System.out.println("Professional Title: " + rs.getString(5));
+				System.out.println("Phone Number:: " + rs.getString(6));
+				System.out.println("Gender: " + rs.getString(7));
+				System.out.println("Job Title: " + rs.getString(8));
+				System.out.println("Department: " + rs.getString(9));
+				System.out.println("*********************************************************************************************");
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+		}
+		try {
+			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
+			int temp;
+			System.out.println("Enter Doctor ID:");
+			temp = input.nextInt();
+			Connector.setPreparedStatementInt(1, temp);
+			ResultSet rs = Connector.executePreparedQuery();
+			while(rs.next()) {
+				System.out.println("Name: " + rs.getString(2));
+				System.out.println("DOB: " + rs.getDate(3));
+				System.out.println("Address: " + rs.getString(4));
+				System.out.println("Gender: " + rs.getString(5));
+				System.out.println("SSN: " + rs.getString(6));
+				System.out.println("Treatment Status: " + rs.getString(7));
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+		}
+	}
+	
+	private static void getActivePatientForDoctor(Scanner input) {
+		try {
+			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
+			int temp;
+			System.out.println("Enter Doctor ID:");
+			temp = input.nextInt();
+			Connector.setPreparedStatementInt(1, temp);
+			ResultSet rs = Connector.executePreparedQuery();
+			while(rs.next()) {
+				System.out.println("Name: " + rs.getString(2));
+				System.out.println("DOB: " + rs.getDate(3));
+				System.out.println("Address: " + rs.getString(4));
+				System.out.println("Gender: " + rs.getString(5));
+				System.out.println("SSN: " + rs.getString(6));
+				System.out.println("Treatment Status: " + rs.getString(7));
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+		}
+	}
+	private static void getWardUsagePercentage() {
+		try {
+			Connector.createStatement();
+			ResultSet rs = Connector.executeQuery(Constants.getWardUsagePercentage);
+			if(rs.next()) {
+				System.out.println("Current Wards Usage:" + (rs.getFloat(1)*100));
+			}
+			else {
+				System.out.println("Error occured. Try again.");
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+		}
+	}
+	
+	private static void checkBedAvailability(Scanner input) {
+		System.out.println("Check available beds based on following options:");
+		System.out.println("1. Bed Type");
+		System.out.println("2. Ward Number");
+		System.out.print("Enter Choice : ");
+		int choice = input.nextInt();
+		switch (choice) {
+		case 1:
+			checkBedAvailabilityBasedOnBedType(input);
+			break;
+		case 2:
+			checkBedAvailabilityBasedWardNo(input);
+			break;
+		}
+		
+	}
+	private static void checkBedAvailabilityBasedOnBedType(Scanner input) {
+		try {
+			Connector.createPreparedStatement(Constants.checkBedAvailabilityBasedOnBedType);
+			int temp;
+			System.out.println("Enter Ward type:1-Bed (1) /2-Bed (2) /3-Bed (3)");
+			temp = input.nextInt();
+			Connector.setPreparedStatementInt(1, temp);
+			ResultSet rs = Connector.executePreparedQuery();
+			if(rs.next()) {
+				System.out.println("Number of Available Beds:" + rs.getInt(1));
+			}
+			else {
+				System.out.println("Error occured. Try again.");
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+		}
+	}
+	
+	private static void checkBedAvailabilityBasedWardNo(Scanner input) {
+		try {
+			Connector.createPreparedStatement(Constants.checkBedAvailabilityBasedWardNo);
+			int temp;
+			System.out.println("Enter Ward Number:");
+			temp = input.nextInt();
+			Connector.setPreparedStatementInt(1, temp);
+			ResultSet rs = Connector.executePreparedQuery();
+			if(rs.next()) {
+				System.out.println("Number of Available Beds:" + rs.getInt(1));
+			}
+			else {
+				System.out.println("Error occured. Try again.");
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
 	
