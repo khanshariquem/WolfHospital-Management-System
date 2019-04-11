@@ -568,5 +568,132 @@ public class RegistrationStaff {
 		Connector.setAutoCommit(true);
 		
 	}
+	private static void check_in(Scanner input) throws SQLException {
+		try {
+			Connector.setAutoCommit(false);
+			Connector.createPreparedStatement(Constants.createCheckIn);
+			//int capacity = 0 , charges = 0;
+			System.out.println("Enter Patient ID:");
+			String id = input.next();
+			if(new Validation("Patient","PatientID",id).validatePresence()){
+				System.out.println("Enter Ward Number:");
+				int wardNo = input.nextInt();
+				System.out.println("Enter Bed ID:");
+				String bedid = input.next();
+				System.out.println("Enter State Date(yyyy-mm-dd):");
+				String temp = input.next();
+				try {
+					Date sDate = Date.valueOf(temp);
+					Connector.setPreparedStatementDate(3, sDate);
+				} catch (Exception e) {
+					System.out.println("Invalid data, Try agian"+e.getMessage());
+					return ;
+				}
+
+				boolean bedAlloted=false;
+				while(!bedAlloted){
+					//check bed availability
+					if(true){
+						Connector.setPreparedStatementInt(1, Integer.valueOf(User.id));
+						Connector.setPreparedStatementInt(2, Integer.valueOf(id));
+						Connector.setPreparedStatementInt(4, wardNo);
+						Connector.setPreparedStatementString(5, bedid.toUpperCase());
+						Connector.executeUpdatePreparedQuery();
+						bedAlloted=true;
+
+					}
+					else{
+						bedAlloted=false;
+					}
+				}
+				//Update Bed status to unavailable
+				if(bedAlloted){
+
+						Connector.createPreparedStatement(Constants.reserveBed);
+						Connector.setPreparedStatementInt(1, wardNo);
+						Connector.setPreparedStatementString(2, bedid.toUpperCase());
+						Connector.executeUpdatePreparedQuery() ;
+
+				}
+
+				Connector.commit();
+				System.out.println("Ward added Successfully");
+			}
+			else{
+				System.out.println("Incorrect Patient Id, retry");
+			}
+
+		} catch (SQLException e) {
+			Connector.rollback();
+			System.out.println("Error occured while processing the data" + e.getMessage());
+		}
+		Connector.setAutoCommit(true);
+
+	}
+	public static void getMedicalRecordForPatient(Scanner input) throws SQLException{
+		System.out.println("Start**");
+		try {
+			Connector.createPreparedStatement(Constants.getMedicalRecordForPatient);
+			int temp;
+			System.out.println("Enter Patient ID:");
+			temp = input.nextInt();
+			Connector.setPreparedStatementInt(3, temp);
+			System.out.println("Enter Month:");
+			String stMonth=input.next();
+			Connector.setPreparedStatementString(1, stMonth);
+			System.out.println("Enter Year:");
+			stMonth=input.next();
+			Connector.setPreparedStatementString(2, stMonth);
+			ResultSet rs = Connector.executePreparedQuery();
+			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-8s|      %-8s |      %-12s |      %-18s |      %-18s |          %-20s |  %-8s |%n";
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			System.out.format("| Medical Record ID|  Start Date   |    End Date   |  Staff ID   | Patient ID    |    Medicine Name  |          Test Name      |          Test Lab       |          Test Result          | Test Staff|%n");
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+
+			while(rs.next()) {
+				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11));
+
+			}
+
+
+		} catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+		}
+	}
+	public static void getMedicalRecordForPatientBetween(Scanner input) throws SQLException{
+		System.out.println("Start**");
+		try {
+			Connector.createPreparedStatement(Constants.getMedicalRecordForPatientBetween);
+			int temp;
+			System.out.println("Enter Patient ID:");
+			temp = input.nextInt();
+			System.out.println("Enter Start Month:");
+			String stMonth=input.next();
+			Connector.setPreparedStatementString(1, stMonth);
+			System.out.println("Enter End Month:");
+			 stMonth=input.next();
+			Connector.setPreparedStatementString(2, stMonth);
+			System.out.println("Enter Search Year:");
+			 stMonth=input.next();
+			Connector.setPreparedStatementString(3, stMonth);
+			Connector.setPreparedStatementInt(4, temp);
+			ResultSet rs = Connector.executePreparedQuery();
+			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-8s|      %-8s |      %-12s |      %-18s |      %-18s |          %-20s |  %-8s |%n";
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			System.out.format("| Medical Record ID|  Start Date   |    End Date   |  Staff ID   | Patient ID    |    Medicine Name  |          Test Name      |          Test Lab       |          Test Result          | Test Staff|%n");
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+
+			while(rs.next()) {
+				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11));
+
+			}
+
+
+		} catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+		}
+	}
+
+
 
 }
