@@ -1,3 +1,5 @@
+import java.io.Console;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -17,10 +19,17 @@ public class Index {
 				break;
 			} catch (Exception e) {
 				System.out.println("Error Occurred.Try again."+e.getMessage());
-			} 	
+			}
 		}
 		homePage(input);
 	}
+
+	 public static char[] hideConsole(String field) {
+		 Console console = System.console();
+
+		char[] password = console.readPassword(field);
+		return password;
+	 }
 	
 	public static void homePage(Scanner input) {
 		while (true) {
@@ -72,5 +81,133 @@ public class Index {
 			}
 		}
 	}
+	public static void dropTables(){
+		try {
+			Connector.createPreparedStatement(Constants.dropTestTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropMedicineTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropBillingRecordTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropMedicalRecordTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropCheckInTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropBedTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropWardTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropPatientTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.dropStaffTable);
+			Connector.executeUpdatePreparedQuery();
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+			e.printStackTrace(System.out);
+		}
+	}
+	public static void init(){
+		try {
+			//Drop Tables
+		//	dropTables();
 
+
+			//Create Tables
+			Connector.createPreparedStatement(Constants.createStaffTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createPatientTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createWardTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createBedTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createCheckInTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createMedicalRecordTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createBillingRecordTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createMedicineTable);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.createTestTable);
+			Connector.executeUpdatePreparedQuery();
+
+			//Dummy Data Init
+			Connector.createPreparedStatement(Constants.insertStaffs);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.insertPatients);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.insertMedicalRecords);
+			Connector.executeUpdatePreparedQuery();
+
+			Connector.createPreparedStatement(Constants.insertBillingRecords);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.insertWards);
+			Connector.executeUpdatePreparedQuery();
+			Connector.createPreparedStatement(Constants.insertBeds);
+			Connector.executeUpdatePreparedQuery();
+
+			Connector.createPreparedStatement(Constants.insertCheckIns);
+			Connector.executeUpdatePreparedQuery();
+
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+			e.printStackTrace(System.out);
+		}
+
+
+	}
+	/*
+	public  static void  selectMedicalRecord(){
+		System.out.println("Medical Record Table");
+		try {
+			Connector.createPreparedStatement(Constants.selectMedicalRecord);
+
+			ResultSet rs = Connector.executePreparedQuery();
+
+			while(rs.next()) {
+				System.out.print(rs.getString(1));
+				System.out.print(rs.getString(2));
+				System.out.print(rs.getDate(3));
+				System.out.print( rs.getString(4));
+				System.out.print( rs.getString(5));
+				System.out.print( rs.getString(6));
+				System.out.println(rs.getString(7));
+				System.out.println( rs.getString(8));
+				System.out.println( rs.getString(9));
+
+			}
+
+
+		} catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+
+		}
+	}
+	public  static void selectPatient(){
+		System.out.println("Patient Table");
+		try {
+			Connector.createPreparedStatement(Constants.selectPatient);
+
+			ResultSet rs = Connector.executePreparedQuery();
+
+			while(rs.next()) {
+				System.out.print(rs.getString(1));
+				System.out.print(rs.getString(2));
+				System.out.print(rs.getDate(3));
+				System.out.print( rs.getString(4));
+				System.out.print( rs.getString(5));
+				System.out.print( rs.getString(6));
+				System.out.println(rs.getString(7));
+				System.out.println( rs.getString(8));
+
+			}
+
+
+		} catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+		}
+	}*/
 }
