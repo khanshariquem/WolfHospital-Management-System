@@ -27,7 +27,7 @@ public class User {
 			execute(id);
 		}
 		catch(SQLException e) {
-			//todo
+			System.out.println("Error occured, try again"+e.getMessage());
 		}
 		
 	}
@@ -38,7 +38,7 @@ public class User {
 			execute(id);
 		}
 		catch(SQLException e) {
-			//todo
+			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
 	
@@ -48,7 +48,7 @@ public class User {
 			execute(id);
 		}
 		catch(SQLException e) {
-			//todo
+			System.out.println("Error occured, try again"+e.getMessage());
 		}
 		
 	}
@@ -64,7 +64,7 @@ public class User {
 				else
 					name = null;
 		} catch (SQLException e) {
-			//todo
+			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
 	

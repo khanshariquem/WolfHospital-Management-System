@@ -49,19 +49,31 @@ public class Connector {
 	}
 	
 	public static void setPreparedStatementString(int key , String value) throws SQLException {
+		if(value==null)
+			prepStmt.setNull(key, Types.VARCHAR);
+		else
 			prepStmt.setString(key, value);         	
 	}
 	
-	public static void setPreparedStatementInt(int key , int value) throws SQLException {
-		prepStmt.setInt(key, value);         	
+	public static void setPreparedStatementInt(int key , Integer value) throws SQLException {
+		if(value== null)
+			prepStmt.setNull(key, Types.INTEGER);
+		else
+			prepStmt.setInt(key, value);         	
 	}
 	
-	public static void setPreparedStatementFloat(int key , float value) throws SQLException {
-		prepStmt.setFloat(key, value);         	
+	public static void setPreparedStatementFloat(int key , Float value) throws SQLException {
+		if(value== null)
+			prepStmt.setNull(key, Types.FLOAT);
+		else
+			prepStmt.setFloat(key, value);         	
 	}
 	
 	public static void setPreparedStatementDate(int key , Date value) throws SQLException {
-		prepStmt.setDate(key, value);         	
+		if(value== null)
+			prepStmt.setNull(key, Types.DATE);
+		else
+			prepStmt.setDate(key, value);         	
 	}
 	
 	public static ResultSet executeQuery(String query) throws SQLException {

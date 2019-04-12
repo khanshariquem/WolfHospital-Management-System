@@ -21,7 +21,24 @@ public class Index {
 				System.out.println("Error Occurred.Try again."+e.getMessage());
 			}
 		}
-		homePage(input);
+		
+		while(true) {
+			System.out.println("1. Initialise data");
+			System.out.println("2. Go to home");
+			System.out.print("Enter Choice : ");
+			int choice = input.nextInt();
+			switch (choice) {
+			case 1:
+				init();
+			case 2: 
+				homePage(input);
+				break;
+			default:
+				System.out.println("Enter correct choice");
+			}
+		}
+		
+		
 	}
 
 	 public static char[] hideConsole(String field) {
@@ -81,7 +98,7 @@ public class Index {
 			}
 		}
 	}
-	public static void dropTables(){
+	private static void dropTables(){
 		try {
 			Connector.createPreparedStatement(Constants.dropTestTable);
 			Connector.executeUpdatePreparedQuery();
@@ -104,15 +121,12 @@ public class Index {
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());
-			e.printStackTrace(System.out);
+			//e.printStackTrace(System.out);
 		}
 	}
-	public static void init(){
+	
+	private static void createTables() {
 		try {
-			//Drop Tables
-		//	dropTables();
-
-
 			//Create Tables
 			Connector.createPreparedStatement(Constants.createStaffTable);
 			Connector.executeUpdatePreparedQuery();
@@ -133,6 +147,16 @@ public class Index {
 			Connector.createPreparedStatement(Constants.createTestTable);
 			Connector.executeUpdatePreparedQuery();
 
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+			//e.printStackTrace(System.out);
+		}
+	}
+	
+	private static void insertDemoData()
+	{
+		try {
 			//Dummy Data Init
 			Connector.createPreparedStatement(Constants.insertStaffs);
 			Connector.executeUpdatePreparedQuery();
@@ -154,10 +178,13 @@ public class Index {
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());
-			e.printStackTrace(System.out);
+			//e.printStackTrace(System.out);
 		}
-
-
+	}
+	private static void init(){
+			dropTables();
+			createTables();
+			insertDemoData();
 	}
 	/*
 	public  static void  selectMedicalRecord(){

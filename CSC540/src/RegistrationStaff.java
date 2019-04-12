@@ -110,35 +110,15 @@ public class RegistrationStaff {
 		try {
 			Connector.createStatement();
 			ResultSet rs = Connector.executeQuery(Constants.getAllStaff);
+			
+			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-4s|      %-40s |      %-12s |      %-8s |      %-18s |          %-15s          |  %-18s                |%n";
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			System.out.format("| Staff ID  |  Name   |    DOB  |   Age   |   Address |    Phone   |    Gender  |       Professional Title    |   Job Title    |     Department       |%n");
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+
 			while(rs.next()) {
-				System.out.println("Name: " + rs.getString(2));
-				System.out.println("Address: " + rs.getString(3));
-				System.out.println("DOB: " + rs.getDate(4));
-				System.out.println("Professional Title: " + rs.getString(5));
-				System.out.println("Phone Number:: " + rs.getString(6));
-				System.out.println("Gender: " + rs.getString(7));
-				System.out.println("Job Title: " + rs.getString(8));
-				System.out.println("Department: " + rs.getString(9));
-				System.out.println("*********************************************************************************************");
-			}
-		}
-		catch(SQLException e) {
-			System.out.println("Error occured, try again." + e.getMessage());
-		}
-		try {
-			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
-			int temp;
-			System.out.println("Enter Doctor ID:");
-			temp = input.nextInt();
-			Connector.setPreparedStatementInt(1, temp);
-			ResultSet rs = Connector.executePreparedQuery();
-			while(rs.next()) {
-				System.out.println("Name: " + rs.getString(2));
-				System.out.println("DOB: " + rs.getDate(3));
-				System.out.println("Address: " + rs.getString(4));
-				System.out.println("Gender: " + rs.getString(5));
-				System.out.println("SSN: " + rs.getString(6));
-				System.out.println("Treatment Status: " + rs.getString(7));
+				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(4),Util.getAge(rs.getDate(4)),rs.getString(3),rs.getString(6),Util.getGender(rs.getString(7)),rs.getString(5),rs.getString(8),rs.getString(9));
+
 			}
 		}
 		catch(SQLException e) {
@@ -154,13 +134,14 @@ public class RegistrationStaff {
 			temp = input.nextInt();
 			Connector.setPreparedStatementInt(1, temp);
 			ResultSet rs = Connector.executePreparedQuery();
+			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-4s|      %-40s |      %-12s |      %-8s |      %-18s |          %-5s          |  %-8s                |%n";
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			System.out.format("| Patient ID  |  Name   |    DOB  |   Age   |   Address |    Phone   |    Gender  |       SSN  |Processing Treatment Plan| Completing Treatment |%n");
+			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+
 			while(rs.next()) {
-				System.out.println("Name: " + rs.getString(2));
-				System.out.println("DOB: " + rs.getDate(3));
-				System.out.println("Address: " + rs.getString(4));
-				System.out.println("Gender: " + rs.getString(5));
-				System.out.println("SSN: " + rs.getString(6));
-				System.out.println("Treatment Status: " + rs.getString(7));
+				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(3),Util.getAge(rs.getDate(3)),rs.getString(4),rs.getString(5),Util.getGender(rs.getString(6)),rs.getString(7),rs.getString(8),rs.getString(9));
+
 			}
 		}
 		catch(SQLException e) {
@@ -468,9 +449,14 @@ public class RegistrationStaff {
 				System.out.println("Invalid data, Try agian"+e.getMessage());
 				return ;
 			}
-			
-			System.out.println("Enter Staff Professional Title:");
+			System.out.println("Do you want to Enter Staff Professional Title(optional)? (Y/N):");
 			temp = input.next();
+			if(temp.equals("Y")) {
+				System.out.println("Enter Staff Professional Title:");
+				temp = input.next();
+			}
+			else 
+				temp = null;
 			Connector.setPreparedStatementString(4, temp);
 			System.out.println("Enter Staff Phone Number:");
 			temp = input.next();
@@ -478,14 +464,20 @@ public class RegistrationStaff {
 			System.out.println("Enter Staff Gender(M/F/NB/U):");
 			temp = input.next();
 			Connector.setPreparedStatementString(6, temp);
-			System.out.println("Enter Staff Job Title(RegistrationStaff/Doctor/Nurse):");
+			System.out.println("Enter Staff Job Title:");
 			temp = input.next();
 			Connector.setPreparedStatementString(7, temp);
 			System.out.println("Enter Staff Department:");
 			temp = input.next();
 			Connector.setPreparedStatementString(8, temp);
 			Connector.executeUpdatePreparedQuery();
-			System.out.println("Staff Registered Successfully");
+			ResultSet rs = Connector.getGeneratedKeys();
+			int ID = 0;
+			if(rs.next())
+				ID = rs.getInt(1);
+			else
+				throw new SQLException();
+			System.out.println("Staff Registered Successfully with ID: "+ID);
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured while processing the data"+e.getMessage());
@@ -514,23 +506,47 @@ public class RegistrationStaff {
 			System.out.println("Enter Patient Gender(M/F/NB/U):");
 			temp = input.next();
 			Connector.setPreparedStatementString(4, temp);
+			System.out.println("Enter Patient Phone number:");
+			temp = input.next();
+			Connector.setPreparedStatementString(5, temp);
 			System.out.println("Do you want to enter SSN(optional)? (Y/N):");
 			temp = input.next();
 			if(temp.equals("Y")) {
 				System.out.println("Enter SSN:");
 				temp = input.next();
-				Connector.setPreparedStatementString(5, temp);
-			}	
-			Connector.setPreparedStatementString(6, "Ongoing");
-			Connector.setPreparedStatementInt(7, Integer.parseInt(User.id));
+			}
+			else
+				temp = null;
+			Connector.setPreparedStatementString(6, temp);
+			Connector.setPreparedStatementString(7, "Yes");
+			Connector.setPreparedStatementInt(8, Integer.parseInt(User.id));
 			Connector.executeUpdatePreparedQuery();
-			System.out.println("Patient Registered Successfully");
+			ResultSet rs = Connector.getGeneratedKeys();
+			int ID = 0;
+			if(rs.next())
+				ID = rs.getInt(1);
+			else
+				throw new SQLException();
+			System.out.println("Patient Registered Successfully with ID : "+ID);
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured while processing the data "+e.getMessage());
 		}			
 	}
 	
+	public static boolean validateNurse(int id) {
+		try {
+			Connector.createPreparedStatement(Constants.validatePatient);
+			ResultSet result = Connector.executePreparedQuery();
+			if(result.next()) {
+				return true;
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+		}
+		return false;
+	}
 	
 	private static void createNewWard(Scanner input) throws SQLException {
 		try {
@@ -543,6 +559,16 @@ public class RegistrationStaff {
 			System.out.println("Enter Ward Charges:");
 			charges = input.nextInt();
 			Connector.setPreparedStatementInt(2, charges);
+			while(true) {
+				System.out.println("Enter Responsible Nurse:");
+				int staffID = input.nextInt();
+				if(validateNurse(staffID)) {
+					Connector.setPreparedStatementInt(3, staffID);
+					break;
+				}
+				else
+					System.out.println("Nurse does not exist. try again.");
+			}
 			Connector.executeUpdatePreparedQuery();
 			ResultSet rs = Connector.getGeneratedKeys();
 			int wardNo = 0;
@@ -560,7 +586,7 @@ public class RegistrationStaff {
 				alphabet++;
 			}
 			Connector.commit();
-			System.out.println("Ward added Successfully");
+			System.out.println("Ward "+ wardNo +" added Successfully");
 		} catch (SQLException e) {
 			Connector.rollback();
 			System.out.println("Error occured while processing the data" + e.getMessage());
