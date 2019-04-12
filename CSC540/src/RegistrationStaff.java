@@ -1,3 +1,4 @@
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,6 +47,11 @@ public class RegistrationStaff {
 				createNewPatient(input);
 				break;
 			case 4:
+                try {
+                    updateStaffDetails(input);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
 				break;
 			case 5:
 				break;
@@ -104,6 +110,58 @@ public class RegistrationStaff {
 			}
 		}
 	}
+
+	private static void updateStaffDetails(Scanner input) throws SQLException{
+		try {
+            Connector.setAutoCommit(false);
+            System.out.println("Enter StaffID for update:");
+			int staffId = input.nextInt();
+			System.out.println("Enter no of columns for updation:");
+			int count = input.nextInt();
+			for(int i = 0; i < count; i++) {
+				System.out.println("Select the column to update its value:\n 1.Name 2.Address 3.DOB 4.ProfTitle 5.Phone 6.Gender 7.JobTitle 8.Dept");
+				int choice = input.nextInt();
+				String colName = "";
+				System.out.println("Enter new value");
+				String newVal = input.next();
+				switch (choice) {
+					case 1:
+						colName = "Name";
+						break;
+					case 2:
+						colName = "Address";
+                        break;
+					case 3:
+						colName = "DOB";
+                        break;
+					case 4:
+						colName = "ProfTitle";
+                        break;
+					case 5:
+						colName = "Phone";
+                        break;
+					case 6:
+						colName = "Gender";
+                        break;
+					case 7:
+						colName = "JobTitle";
+                        break;
+					case 8:
+						colName = "Dept";
+				}
+				String query = "update Staff set " + colName + " = ? where StaffId = ?";
+				Connector.createPreparedStatement(query);
+				Connector.setPreparedStatementString(1, newVal);
+				Connector.setPreparedStatementInt(2, staffId);
+				Connector.executeUpdatePreparedQuery();
+            }
+            Connector.commit();
+        }
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+		}
+        Connector.setAutoCommit(true);
+    }
 	
 	private static void getAllStaffs(Scanner input) {
 		
