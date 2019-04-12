@@ -39,5 +39,15 @@ public class Util {
 
         return age;
     }
+    
+    public static String getGender(String code) {
+    	String s = "";
+    	if(code.equals("M"))
+    		s = "Male";
+    	else if(code.equals("F"))
+    		s = "Female";
+    	
+    	return s;
+    }
 
 }
