@@ -18,7 +18,7 @@ public class RegistrationStaff {
 			System.out.println("6. Update patient details");
 			System.out.println("7. Delete a staff");
 			System.out.println("8. Delete a ward");
-			System.out.println("9. Delete a pateint");
+			System.out.println("9. Delete a patient");
 			System.out.println("10. Check bed availability");
 			System.out.println("11. Assign a bed to patient");
 			System.out.println("12. Reserve a bed for patient");
@@ -27,20 +27,28 @@ public class RegistrationStaff {
 			System.out.println("15. Get ward Usage percentage");
 			System.out.println("16. Get current patients for doctor ");
 			System.out.println("17. Get all staff information grouped by role");
-			System.out.println("18. Get bed usage");
-			System.out.println("19. Get patients count");
-			System.out.println("20. Sign Out");
-			System.out.println("21. Exit");
+            System.out.println("18. Get Patient Medical Record by MM/YYY");
+            System.out.println("19. Get Patient Medical Record between start and end period");
+            System.out.println("20. Create Check-In");
+            System.out.println("21. Update Medical Record");
+            System.out.println("22. Get bed usage");
+			System.out.println("23. Get patients count");
+			System.out.println("24. Sign Out");
+			System.out.println("25. Exit");
+
 			System.out.print("Enter Choice : ");
 			
 			int choice = input.nextInt();
 			switch (choice) {
 			case 1:
 				createNewStaff(input);
+
 				break;
 			case 2:
+
 				try {
-					createNewWard(input);
+
+                    createNewWard(input);
 				} catch (SQLException e) {
 					System.out.println(e.getMessage());
 				}
@@ -110,20 +118,44 @@ public class RegistrationStaff {
 				getAllStaffs(input);
 				break;
 			case 18:
+                try {
+                    getMedicalRecordForPatient(input);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+                case 19:
+                try {
+                    getMedicalRecordForPatientBetween(input);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+                case 20:
+                try {
+                    check_in(input);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case 21:
+                    Doctor.updateMedicalRecord(input);
+                break;
+            case 22:
 				getBedUsage();
 				break;
-			case 19:
+			case 23:
 				try {
 					getPatientCount(input);
 				} catch (SQLException e) {
 					System.out.println(e.getMessage());
 				}
 				break;
-			case 20:
+			case 24:
 				User.name = null;
 				Index.homePage(input);
 				break;
-			case 21:
+			case 25:
 				Connector.closeConnection();
 				System.out.println("Thank you for using the application! Hope to see you soon !");
 				System.exit(0);
