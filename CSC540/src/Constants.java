@@ -4,16 +4,17 @@ public final class Constants {
 	public static final String doctorRole = "D";
 	public static final String patientRole = "P";
 	public static final String registrationStaffRole = "R";
-	
+	public static final String checkStaff = "select * from Staff where StaffId = ?";
 	public static final String validatePatient = "select * from Patient where PatientID = ?";
+	public static final String validateWard = "select * from Ward where WardNo = ?";
 	public static final String validateDoctor = "select * from Staff where StaffID = ? and JobTitle = 'Doctor'";
 	public static final String validateRegistrationStaff = "select * from Staff where StaffID = ? and JobTitle <> 'Doctor' and JobTitle <> 'Nurse' ";
 	public static final String validateNurse = "select * from Staff where StaffID = ? and JobTitle = 'Nurse'";
 	
 	public static final String createStaff = "insert into Staff (Name, Address, DOB, ProfTitle, Phone, Gender, JobTitle, Dept) values(?,?,?,?,?,?,?,?)";
-	public static final String createPatient ="insert into Patient(Name, DOB, Address, Gender, Phone, SSN, Completing_Treatment, StaffID) values(?,?,?,?,?,?,?,?)";
+	public static final String createPatient ="insert into Patient(Name, DOB, Address, Gender, Phone, SSN, Processing_Treatment_Plan, Completing_Treatment, StaffID) values(?,?,?,?,?,?,?,?,?)";
 	
-	public static final String createWard ="insert into Ward (Capacity,Charges,StaffID) values (?, ?,?)";
+	public static final String createWard ="insert into Ward (Capacity,Charges,StaffID) values (?,?,?)";
 	public static final String createBed = "insert into Bed(BedID, WardNo, Status) values (?,?,?)";
 	public static final String deletePatient = "DELETE FROM Patient WHERE PatientID = ?";
 	public static final String deleteStaff = "DELETE FROM Staff WHERE StaffID = ?";
@@ -55,7 +56,7 @@ public final class Constants {
 
 	public static final String createPatientTable ="CREATE TABLE Patient ( PatientID INT NOT NULL AUTO_INCREMENT, " +
 			"Name VARCHAR(100) NOT NULL, DOB DATE NOT NULL, Address VARCHAR(255) NOT NULL,Phone VARCHAR(20) NOT NULL, Gender CHAR(2) NOT NULL," +
-			" SSN VARCHAR(20), StaffID INT NOT NULL,Processing_Treatment_Plan INT ," +
+			" SSN VARCHAR(20), StaffID INT NOT NULL,Processing_Treatment_Plan INT NOT NULL," +
 			"Completing_Treatment CHAR(3) NOT NULL, PRIMARY KEY (PatientID)," +
 			"CONSTRAINT restrict_gender_vals_patient CHECK (Gender IN ('M', 'F', 'NB', 'U')),CONSTRAINT restrict_Treatment_vals CHECK (Completing_Treatment IN ('Yes', 'No'))," +
 			"CONSTRAINT FK_StaffID FOREIGN KEY (StaffID) REFERENCES Staff(StaffID) );";
