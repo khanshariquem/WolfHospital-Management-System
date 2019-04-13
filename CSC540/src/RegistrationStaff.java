@@ -465,9 +465,9 @@ public class RegistrationStaff {
 			Connector.createStatement();
 			ResultSet rs = Connector.executeQuery(Constants.getBedUsage);
 			String leftAlignFormat = "|       %-10s |    %-10s |    %-10s |     %-10s|%n";
-			System.out.format("+------------------+----------------+--------------+--------------+%n");
-			System.out.format("| Ward No          |  Capacity      |    Available |  Occupied    |%n");
-			System.out.format("+------------------+----------------+--------------+--------------+%n");
+			System.out.format("+------------------+---------------+---------------+---------------+%n");
+			System.out.format("| Ward No          |  Capacity     |    Available  |  Occupied     |%n");
+			System.out.format("+------------------+---------------+---------------+---------------+%n");
 
 			while(rs.next()) {
 				System.out.format(leftAlignFormat,rs.getInt(1),rs.getInt(2),rs.getInt(3),rs.getInt(4));
