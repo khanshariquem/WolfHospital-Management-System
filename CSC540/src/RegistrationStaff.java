@@ -48,14 +48,24 @@ public class RegistrationStaff {
 				break;
 			case 4:
                 try {
-                    updateStaffDetails(input);
+                    updateBRDetails(input);
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }
 				break;
 			case 5:
+                try {
+                    updateWardDetails(input);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
 				break;
 			case 6:
+                try {
+                    updatePatientDetails(input);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
 				break;
 			case 7:
 				deleteStaff(input);
@@ -113,53 +123,253 @@ public class RegistrationStaff {
 
 	private static void updateStaffDetails(Scanner input) throws SQLException{
 		try {
-            Connector.setAutoCommit(false);
             System.out.println("Enter StaffID for update:");
 			int staffId = input.nextInt();
-			System.out.println("Enter no of columns for updation:");
-			int count = input.nextInt();
-			for(int i = 0; i < count; i++) {
-				System.out.println("Select the column to update its value:\n 1.Name 2.Address 3.DOB 4.ProfTitle 5.Phone 6.Gender 7.JobTitle 8.Dept");
-				int choice = input.nextInt();
-				String colName = "";
-				System.out.println("Enter new value");
-				String newVal = input.next();
-				switch (choice) {
-					case 1:
-						colName = "Name";
-						break;
-					case 2:
-						colName = "Address";
-                        break;
-					case 3:
-						colName = "DOB";
-                        break;
-					case 4:
-						colName = "ProfTitle";
-                        break;
-					case 5:
-						colName = "Phone";
-                        break;
-					case 6:
-						colName = "Gender";
-                        break;
-					case 7:
-						colName = "JobTitle";
-                        break;
-					case 8:
-						colName = "Dept";
-				}
-				String query = "update Staff set " + colName + " = ? where StaffId = ?";
-				Connector.createPreparedStatement(query);
-				Connector.setPreparedStatementString(1, newVal);
-				Connector.setPreparedStatementInt(2, staffId);
-				Connector.executeUpdatePreparedQuery();
+            Connector.createStatement();
+            String checkUser = "select * from Staff where StaffId = " + staffId;
+            ResultSet rs =  Connector.executeQuery(checkUser);
+            if(rs.next()) {
+                Connector.setAutoCommit(false);
+                System.out.println("Enter no of columns for updation:");
+                int count = input.nextInt();
+                for(int i = 0; i < count; i++) {
+                    System.out.println("Select the column to update its value:\n 1.Name 2.Address 3.DOB 4.ProfTitle 5.Phone 6.Gender 7.JobTitle 8.Dept");
+                    int choice = input.nextInt();
+                    String colName = "";
+                    System.out.println("Enter new value");
+                    String newVal = input.next();
+                    switch (choice) {
+                        case 1:
+                            colName = "Name";
+                            break;
+                        case 2:
+                            colName = "Address";
+                            break;
+                        case 3:
+                            colName = "DOB";
+                            break;
+                        case 4:
+                            colName = "ProfTitle";
+                            break;
+                        case 5:
+                            colName = "Phone";
+                            break;
+                        case 6:
+                            colName = "Gender";
+                            break;
+                        case 7:
+                            colName = "JobTitle";
+                            break;
+                        case 8:
+                            colName = "Dept";
+                    }
+                    String query = "update Staff set " + colName + " = ? where StaffId = ?";
+                    Connector.createPreparedStatement(query);
+                    Connector.setPreparedStatementString(1, newVal);
+                    Connector.setPreparedStatementInt(2, staffId);
+                    Connector.executeUpdatePreparedQuery();
+                }
+                Connector.commit();
+                System.out.println("Details updated succcessfully");
+            } else {
+                System.out.println("No such user exists");
             }
-            Connector.commit();
         }
 		catch(SQLException e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
+        Connector.setAutoCommit(true);
+    }
+
+    private static void updatePatientDetails(Scanner input) throws SQLException{
+        try {
+            System.out.println("Enter PatientID for update:");
+            int patientId = input.nextInt();
+            Connector.createStatement();
+            String checkUser = "select * from Patient where PatientId = " + patientId;
+            ResultSet rs =  Connector.executeQuery(checkUser);
+            if(rs.next()) {
+                Connector.setAutoCommit(false);
+                System.out.println("Enter no of columns for updation:");
+                int count = input.nextInt();
+                for(int i = 0; i < count; i++) {
+                    System.out.println("Select the column to update its value:\n 1.Name 2.Address 3.DOB 4.Phone 5.Gender 6.SSN 7.StaffID 8.Processing Treatment Plan 9.Completing Treatment");
+                    int choice = input.nextInt();
+                    String colName = "";
+                    System.out.println("Enter new value");
+                    String newVal = input.next();
+                    switch (choice) {
+                        case 1:
+                            colName = "Name";
+                            break;
+                        case 2:
+                            colName = "Address";
+                            break;
+                        case 3:
+                            colName = "DOB";
+                            break;
+                        case 4:
+                            colName = "Phone";
+                            break;
+                        case 5:
+                            colName = "Gender";
+                            break;
+                        case 6:
+                            colName = "SSN";
+                            break;
+                        case 7:
+                            colName = "StaffID";
+                            break;
+                        case 8:
+                            colName = "Processing_Treatment_Plan";
+                            break;
+                        case 9:
+                            colName = "Completing_Treatment";
+                    }
+                    String query = "update Patient set " + colName + " = ? where PatientId = ?";
+                    Connector.createPreparedStatement(query);
+                    Connector.setPreparedStatementString(1, newVal);
+                    Connector.setPreparedStatementInt(2, patientId);
+                    Connector.executeUpdatePreparedQuery();
+                }
+                Connector.commit();
+                System.out.println("Details updated succcessfully");
+            } else {
+                System.out.println("No such patient exists");
+            }
+        }
+        catch(SQLException e) {
+            System.out.println("Error occured, try again." + e.getMessage());
+        }
+        Connector.setAutoCommit(true);
+    }
+
+    private static void updateWardDetails(Scanner input) throws SQLException{
+        try {
+            System.out.println("Enter WardNo for update:");
+            int wardNo = input.nextInt();
+            Connector.createStatement();
+            String checkUser = "select * from Ward where WardNo = " + wardNo;
+            ResultSet rs =  Connector.executeQuery(checkUser);
+            if(rs.next()) {
+                Connector.setAutoCommit(false);
+                System.out.println("Enter no of columns for updation:");
+                int count = input.nextInt();
+                for(int i = 0; i < count; i++) {
+                    System.out.println("Select the column to update its value:\n 1.Charges 2.Capacity 3.StaffID");
+                    int choice = input.nextInt();
+                    String colName = "";
+                    System.out.println("Enter new value");
+                    String newVal = input.next();
+                    switch (choice) {
+                        case 1:
+                            colName = "Charges";
+                            break;
+                        case 2:
+                            colName = "Capacity";
+                            break;
+                        case 3:
+                            colName = "StaffID";
+                    }
+                    String query = "update Ward set " + colName + " = ? where WardNo = ?";
+                    Connector.createPreparedStatement(query);
+                    Connector.setPreparedStatementString(1, newVal);
+                    Connector.setPreparedStatementInt(2, wardNo);
+                    Connector.executeUpdatePreparedQuery();
+                }
+                Connector.commit();
+                System.out.println("Details updated succcessfully");
+            } else {
+                System.out.println("No such ward exists");
+            }
+        }
+        catch(SQLException e) {
+            System.out.println("Error occured, try again." + e.getMessage());
+        }
+        Connector.setAutoCommit(true);
+    }
+
+    private static void updateBRDetails(Scanner input) throws SQLException{
+        try {
+            System.out.println("Enter BillingRecordID for update:");
+            int billingRecordID = input.nextInt();
+            Connector.createStatement();
+            String checkUser = "select * from BillingRecord where BillingRecordID = " + billingRecordID;
+            ResultSet rs =  Connector.executeQuery(checkUser);
+            if(rs.next()) {
+                Connector.setAutoCommit(false);
+                System.out.println("Enter no of columns for updation:");
+                int count = input.nextInt();
+                for(int i = 0; i < count; i++) {
+                    System.out.println("Select the column to update its value:\n 1.Visit Date 2.Payment Method 3.Card Number 4.Fees 5.PayeeSSN 6.BillingAddress 7.StaffID 8.PatientId 9.MedicalRecordId");
+                    int choice = input.nextInt();
+                    String colName = "";
+                    System.out.println("Enter new value");
+                    String newVal = input.next();
+                    switch (choice) {
+                        case 1:
+                            colName = "VisitDate";
+                            break;
+                        case 2:
+                            colName = "PaymentMethod";
+                            break;
+                        case 3:
+                            colName = "CardNumber";
+                            break;
+                        case 4:
+                            colName = "Fees";
+                            break;
+                        case 5:
+                            colName = "PayeeSSN";
+                            break;
+                        case 6:
+                            colName = "BillingAddress";
+                            break;
+                        case 7:
+                            colName = "StaffID";
+                            Connector.createStatement();
+                            String queryStaff = "select * from Staff where StaffId = " + newVal;
+                            ResultSet resultSetStaff =  Connector.executeQuery(queryStaff);
+                            if(!resultSetStaff.next()) {
+                                System.out.println("Invalid StaffId");
+                                continue; //break or continue???
+                            }
+                            break;
+                        case 8:
+                            colName = "PatientId";
+                            Connector.createStatement();
+                            String queryPatient = "select * from Patient where PatientId = " + newVal;
+                            ResultSet resultSetPatient =  Connector.executeQuery(queryPatient);
+                            if(!resultSetPatient.next()) {
+                                System.out.println("Invalid PatientId");
+                                continue;
+                            }
+                            break;
+                        case 9:
+                            colName = "MedicalRecordId";
+                            Connector.createStatement();
+                            String queryMR = "select * from MedicalRecord where MedicalRecordId = " + newVal;
+                            ResultSet resultSetMR =  Connector.executeQuery(queryMR);
+                            if(!resultSetMR.next()) {
+                                System.out.println("Invalid MedicalRecordId");
+                                continue;
+                            }
+                    }
+                    String query = "update BillingRecord set " + colName + " = ? where BillingRecordID = ?";
+                    Connector.createPreparedStatement(query);
+                    Connector.setPreparedStatementString(1, newVal);
+                    Connector.setPreparedStatementInt(2, billingRecordID);
+                    Connector.executeUpdatePreparedQuery();
+                }
+                Connector.commit();
+                System.out.println("Details updated succcessfully");
+            } else {
+                System.out.println("No such ward exists");
+            }
+        }
+        catch(SQLException e) {
+            System.out.println("Error occured, try again." + e.getMessage());
+        }
         Connector.setAutoCommit(true);
     }
 	
@@ -416,9 +626,6 @@ public class RegistrationStaff {
 		
 	}
 	
-	
-	
-	
 	private static void releaseBed(Scanner input) {
 		try {
 			Connector.createPreparedStatement(Constants.releaseBed);
@@ -449,17 +656,22 @@ public class RegistrationStaff {
 			System.out.println("Enter Staff ID:");
 			temp = input.nextInt();
 			if(temp == Integer.parseInt(User.id)) {
-				System.out.println("you cannot delete your own account, try again");
+				System.out.println("You cannot delete your own account, try again");
 				RegistrationStaff.menu(input);
 			}
-			Connector.setPreparedStatementInt(1, temp);
-			
-			if(Connector.executeUpdatePreparedQuery() == 1)
-				System.out.println("Staff deleted Successfully");
-	        else {
-	        	System.out.println("Error deleting staff, try again");
-	        }
-	  
+            Connector.createStatement();
+            String checkUser = "select * from Staff where StaffId = " + temp;
+            ResultSet rs =  Connector.executeQuery(checkUser);
+            if(rs.next()) {
+                Connector.setPreparedStatementInt(1, temp);
+                if(Connector.executeUpdatePreparedQuery() == 1)
+                    System.out.println("Staff deleted Successfully");
+                else {
+                    System.out.println("Error deleting staff, try again");
+                }
+            } else {
+                System.out.println("User doesn't exist");
+            }
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());
@@ -772,12 +984,8 @@ public class RegistrationStaff {
 
 			}
 
-
 		} catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
-
-
-
 }
