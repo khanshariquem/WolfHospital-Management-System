@@ -27,8 +27,10 @@ public class RegistrationStaff {
 			System.out.println("15. Get ward Usage percentage");
 			System.out.println("16. Get current patients for doctor ");
 			System.out.println("17. Get all staff information grouped by role");
-			System.out.println("18. Sign Out");
-			System.out.println("19. Exit");
+			System.out.println("18. Get bed usage");
+			System.out.println("19. Get patients count");
+			System.out.println("20. Sign Out");
+			System.out.println("21. Exit");
 			System.out.print("Enter Choice : ");
 			
 			int choice = input.nextInt();
@@ -108,10 +110,20 @@ public class RegistrationStaff {
 				getAllStaffs(input);
 				break;
 			case 18:
+				getBedUsage();
+				break;
+			case 19:
+				try {
+					getPatientCount(input);
+				} catch (SQLException e) {
+					System.out.println(e.getMessage());
+				}
+				break;
+			case 20:
 				User.name = null;
 				Index.homePage(input);
 				break;
-			case 19:
+			case 21:
 				Connector.closeConnection();
 				System.out.println("Thank you for using the application! Hope to see you soon !");
 				System.exit(0);
@@ -416,6 +428,25 @@ public class RegistrationStaff {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
+	private static void getBedUsage() {
+		try {
+			Connector.createStatement();
+			ResultSet rs = Connector.executeQuery(Constants.getBedUsage);
+			String leftAlignFormat = "|       %-10s |    %-10s |    %-10s |     %-10s|%n";
+			System.out.format("+------------------+----------------+--------------+--------------+%n");
+			System.out.format("| Ward No          |  Capacity      |    Available |  Occupied    |%n");
+			System.out.format("+------------------+----------------+--------------+--------------+%n");
+
+			while(rs.next()) {
+				System.out.format(leftAlignFormat,rs.getInt(1),rs.getInt(2),rs.getInt(3),rs.getInt(4));
+
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+		}
+	}
+	
 	private static void getWardUsagePercentage() {
 		try {
 			Connector.createStatement();
@@ -956,6 +987,35 @@ public class RegistrationStaff {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
+	
+	
+	public static void getPatientCount(Scanner input) throws SQLException{
+		try {
+			Connector.createPreparedStatement(Constants.getPatientCount);
+			System.out.println("Enter Year:");
+			String stMonth=input.next();
+			Connector.setPreparedStatementString(1, stMonth);
+			System.out.println("Enter Month:");
+			stMonth=input.next();
+			Connector.setPreparedStatementString(2, stMonth);
+			ResultSet rs = Connector.executePreparedQuery();
+			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |%n";
+			System.out.format("+------------------+-------------+-------------+%n");
+			System.out.format("| Year             |  Month      |    Count    |%n");
+			System.out.format("+------------------+-------------+-------------+%n");
+
+			while(rs.next()) {
+				System.out.format(leftAlignFormat,rs.getInt(1),rs.getInt(2),rs.getInt(3));
+
+			}
+
+
+		} catch(SQLException e) {
+			System.out.println("Error occured, try again"+e.getMessage());
+		}
+	}
+	
+	
 	public static void getMedicalRecordForPatientBetween(Scanner input) throws SQLException{
 		System.out.println("Start**");
 		try {

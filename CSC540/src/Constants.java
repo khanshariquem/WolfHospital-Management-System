@@ -27,8 +27,10 @@ public final class Constants {
 	public static final String checkBedAvailabilityBasedOnBedType = "Select Count(B.Status) AS bedsAvailable FROM Ward W INNER JOIN Bed B ON W.WardNO = B.WardNO Where B.Status='Y' AND W.Capacity = ?";
 	public static final String checkBedAvailabilityBasedWardNo = "Select Count(B.Status) AS bedsAvailable  FROM Ward W INNER JOIN Bed  B ON W.WardNO = B.WardNO Where B.Status='Y' AND W.WardNO = ?";
 	public static final String getWardUsagePercentage = "select sum(w.Occupied) / sum(w.capacity) from ( select WardNo , count(BedID) as capacity , SUM(CASE WHEN status = 'Y' THEN 1 ELSE 0 END) as Available ,  SUM(CASE WHEN status = 'N' THEN 1 ELSE 0 END) as Occupied  from Bed group by WardNo ) as w";
+	public static final String getBedUsage = "select WardNo, count(BedID) as capacity, SUM(CASE WHEN status = 'Y' THEN 1 ELSE 0 END) as Available , SUM(CASE WHEN status = 'N' THEN 1 ELSE 0 END) as Occupied from Bed group by WardNo";
 	public static final String getActivePatientForDoctor = " select P.PatientID, P.Name, P.DOB, P.Address, P.Phone, P.Gender, P.SSN, P.Processing_Treatment_Plan , P.Completing_Treatment from Patient P INNER JOIN MedicalRecord MR ON P.PatientID= MR.PatientID Where MR.StaffID = ? AND (MR.EndDate IS NULL OR MR.EndDate >CURDATE())";
 	public static final String getAllStaff = "Select * from Staff ORDER BY JobTitle";
+	public static final String getPatientCount = "SELECT YEAR(VisitDate) YEAR, MONTH(VisitDate) MONTH, COUNT(*) COUNT FROM BillingRecord WHERE YEAR(VisitDate) = ? AND MONTH(VisitDate)= ? GROUP BY MONTH(VisitDate)";
 
 	/*Viviniya Changes*/
 
