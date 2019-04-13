@@ -7,6 +7,7 @@ public final class Constants {
 	public static final String checkStaff = "select * from Staff where StaffId = ?";
 	public static final String validatePatient = "select * from Patient where PatientID = ?";
 	public static final String validateWard = "select * from Ward where WardNo = ?";
+	public static final String checkBeds = "select * from Bed where WardNo = ? and Status = 'N'";
 	public static final String validateDoctor = "select * from Staff where StaffID = ? and JobTitle = 'Doctor'";
 	public static final String validateRegistrationStaff = "select * from Staff where StaffID = ? and JobTitle <> 'Doctor' and JobTitle <> 'Nurse' ";
 	public static final String validateNurse = "select * from Staff where StaffID = ? and JobTitle = 'Nurse'";
@@ -17,6 +18,8 @@ public final class Constants {
 	public static final String createWard ="insert into Ward (Capacity,Charges,StaffID) values (?,?,?)";
 	public static final String createBed = "insert into Bed(BedID, WardNo, Status) values (?,?,?)";
 	public static final String deletePatient = "DELETE FROM Patient WHERE PatientID = ?";
+	public static final String deleteBeds = "DELETE FROM Bed WHERE WardNo = ?";
+	public static final String deleteWard = "DELETE FROM Ward WHERE WardNo = ?";
 	public static final String deleteStaff = "DELETE FROM Staff WHERE StaffID = ?";
 	public static final String reserveBed = "UPDATE Bed SET Status= CASE WHEN Status='Y' THEN 'N' ELSE Status END Where WardNo = ? AND BedID = ?";
 	public static final String releaseBed = "UPDATE Bed SET Status= CASE WHEN Status='N' THEN 'Y' ELSE Status END Where WardNo = ? AND BedID = ?";

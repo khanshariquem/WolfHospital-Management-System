@@ -81,6 +81,7 @@ public class RegistrationStaff {
 				deleteStaff(input);
 				break;
 			case 8:
+				deleteWard(input);
 				break;
 			case 9:
 				deletePatient(input);
@@ -786,6 +787,48 @@ public class RegistrationStaff {
 	}
 	
 	
+	private static void deleteWard(Scanner input) {
+		try {
+			int temp;
+			System.out.println("Enter Ward Number:");
+			temp = input.nextInt();
+			
+			Connector.createPreparedStatement(Constants.validateWard);
+			Connector.setPreparedStatementInt(1, temp);
+            ResultSet rs =  Connector.executePreparedQuery();
+            if(rs.next()) {
+            	Connector.createPreparedStatement(Constants.checkBeds);
+    			Connector.setPreparedStatementInt(1, temp);
+                ResultSet res =  Connector.executePreparedQuery();
+                if(!res.next()) {
+                	try {
+                		Connector.setAutoCommit(false);
+                    	Connector.createPreparedStatement(Constants.deleteBeds);
+                    	Connector.setPreparedStatementInt(1, temp);
+                    	if(Connector.executeUpdatePreparedQuery() == 0)
+                    		throw new SQLException();
+                    	Connector.createPreparedStatement(Constants.deleteWard);
+                    	Connector.setPreparedStatementInt(1, temp);
+                    	if(Connector.executeUpdatePreparedQuery() != 1)
+                    		throw new SQLException();
+                    	Connector.commit();
+                    	Connector.setAutoCommit(true);
+                    	System.out.println("Ward deleted successfully");
+                	} catch(SQLException e){
+                		Connector.rollback();
+                		Connector.setAutoCommit(true);
+                		System.out.println("Error occured while deleting the ward, try again ");
+                	}
+                } else {
+                	System.out.println("One or more beds of this ward are already assigned to patients, ward delete not allowed!");
+                }
+            } else {
+            	System.out.println("Given ward doesn't exist, try again!");
+            }	  
+		} catch(SQLException e) {
+			System.out.println("Error occured, try again "+e.getMessage());
+		}	
+	}
 	
 	private static void createNewStaff(Scanner input) {
 		try {
