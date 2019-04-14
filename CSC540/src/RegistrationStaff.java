@@ -719,7 +719,7 @@ public class RegistrationStaff {
             	Connector.setPreparedStatementInt(1, temp);
     			Connector.setPreparedStatementString(2, bedId.toUpperCase());
                 if(Connector.executeUpdatePreparedQuery() == 1)
-                	System.out.println("Bed reserved Successfully");
+                	System.out.println("Bed released Successfully");
                 else {
                 	System.out.println("Error occured, invalid Bed Id! try again");
                 }
@@ -958,18 +958,18 @@ public class RegistrationStaff {
 	private static void createNewWard(Scanner input) throws SQLException {
 		try {
 			Connector.setAutoCommit(false);
-		    Connector.createPreparedStatement(Constants.createWard);
 		    int capacity = 0, charges = 0;
 		    System.out.println("Enter Ward Capacity:");
 		    capacity = input.nextInt();
-			Connector.setPreparedStatementInt(1, capacity);
 			System.out.println("Enter Ward Charges:");
 			charges = input.nextInt();
-			Connector.setPreparedStatementInt(2, charges);
 			while(true) {
 				System.out.println("Enter Responsible Nurse:");
 				int staffID = input.nextInt();
 				if(validateNurse(staffID)) {
+					Connector.createPreparedStatement(Constants.createWard);
+					Connector.setPreparedStatementInt(1, capacity);
+					Connector.setPreparedStatementInt(2, charges);
 					Connector.setPreparedStatementInt(3, staffID);
 					break;
 				}
