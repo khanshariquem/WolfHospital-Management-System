@@ -56,6 +56,8 @@ public final class Constants {
 	public static final String updateStaffDetails ="update Staff set ? where StaffId = ?";
 	public static final String updatePatientDetails ="update Patient set ? where PatientId = ?";
 	public static final String updateWardDetails ="update Ward set ? where WardNo = ?";
+	public static final String updateBRDetails ="update BillingRecord set ? where BillingRecordID = ?";
+	public static final String updateCheckInDetails ="update CheckIn set ? where PatientID = ? and EndDate is NULL";
 
 
 	/* CREATE TABLES */

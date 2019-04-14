@@ -15,7 +15,6 @@ public class Validation {
         try{
         String selectQuery="select * from "+ this.tableName+ " where  "+   this.fieldName +" = " + this.fieldValue;
             Connector.createPreparedStatement(selectQuery);
-
             ResultSet rs = Connector.executePreparedQuery();
             if(rs.next() )
                 return true;
