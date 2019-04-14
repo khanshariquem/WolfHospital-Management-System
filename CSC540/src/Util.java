@@ -3,15 +3,18 @@ import java.util.Date;
 
 public class Util {
     //Use method to create update query of type "update TableName set ? where ID = ?";
+
     public static String createUpdateStatement(String query1,String query2,String constQuery ){
+//        Connector.createPreparedStatement(Constants.updateMedicine);
+//        StringBuffer buffer = new StringBuffer(temp);
+//        temp = buffer.reverse().toString().replaceFirst("\\?",query2);
+
         query1 = query1.substring(0, query1.length() - 1);
-        //	Connector.createPreparedStatement(Constants.updateMedicine);
         String temp = constQuery.replaceFirst("\\?",query1 );
-        StringBuffer buffer = new StringBuffer(temp);
-        temp = buffer.reverse().toString().replaceFirst("\\?",query2);
-        temp = new StringBuffer(temp).reverse().toString();;
-        return temp;
+        String finalStr = temp.replaceFirst("\\?",query2 );
+        return finalStr;
     }
+
     public static int getAge(Date dateOfBirth) {
 
         Calendar today = Calendar.getInstance();

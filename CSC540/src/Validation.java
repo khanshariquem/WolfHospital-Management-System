@@ -17,13 +17,8 @@ public class Validation {
             Connector.createPreparedStatement(selectQuery);
 
             ResultSet rs = Connector.executePreparedQuery();
-            System.out.println(rs.toString());
             if(rs.next() )
                 return true;
-
-
-
-
         } catch (SQLException e) {
         //todo
             e.printStackTrace(System.out);

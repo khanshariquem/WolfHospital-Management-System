@@ -48,6 +48,12 @@ public final class Constants {
 	public static final String updateTest ="update Test set ? where MedicalRecordID = ?";
 	public static final String updateMROtherField="update MedicalRecord set ? where MedicalRecordID = ?";
 
+
+	public static final String updateStaffDetails ="update Staff set ? where StaffId = ?";
+	public static final String updatePatientDetails ="update Patient set ? where PatientId = ?";
+	public static final String updateWardDetails ="update Ward set ? where WardNo = ?";
+
+
 	/* CREATE TABLES */
 	public static final String createStaffTable ="CREATE TABLE Staff ( StaffID INT NOT NULL AUTO_INCREMENT, Name VARCHAR(100) NOT NULL," +
 			" Address VARCHAR(255) NOT NULL, DOB DATE NOT NULL, ProfTitle VARCHAR(100) , Phone VARCHAR(20) NOT NULL, Gender CHAR(2) NOT NULL, " +
