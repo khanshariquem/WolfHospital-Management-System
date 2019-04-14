@@ -1,6 +1,8 @@
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Scanner;
+
 
 public class Patient {
 	
@@ -17,10 +19,16 @@ public class Patient {
 			int choice = input.nextInt();
 			switch (choice) {
 			case 1:
-                updatePatientDetails(input);
+			    try{
+                    updatePatientDetails(input);
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (RegistrationStaff.InvalidChoice e) {
+                    System.out.println(e.getMessage());
+                }
 				break;
 			case 2:
-                viewMedicalRecord();
+			    viewMedicalRecord(input);
 				break;
 			case 3:
                 viewBillingRecord();
@@ -39,7 +47,7 @@ public class Patient {
 		}
 	}
 
-    private static void updatePatientDetails(Scanner input) {
+    private static void updatePatientDetails(Scanner input) throws SQLException, RegistrationStaff.InvalidChoice {
         try {
             Connector.setAutoCommit(false);
             System.out.println("Choose fields to update (comma separate if multiple fields)");
@@ -75,7 +83,7 @@ public class Patient {
                         update.put("SSN", input.nextLine());
                         break;
                     default:
-                        break;
+                        throw new RegistrationStaff.InvalidChoice("Invalid menu option");
                 }
             }
             String updateQuery = "";
@@ -86,19 +94,58 @@ public class Patient {
             Connector.createPreparedStatement(temp);
             Connector.executeUpdatePreparedQuery();
             System.out.println("Details updated Successfully");
-            Connector.setAutoCommit(true);
+            Connector.commit();
         } catch (SQLException e) {
+            Connector.rollback();
             System.out.println("Error occured while updating your details" + e.getMessage());
             e.printStackTrace(System.out);
         }
+        Connector.setAutoCommit(true);
     }
 
-    private static void viewMedicalRecord() {
+    public static void viewMedicalRecord(Scanner input) {
+        try {
+            Connector.createPreparedStatement(Constants.getMedicalRecordForPatient);
+            Connector.setPreparedStatementInt(3, Integer.parseInt(User.id));
+            System.out.println("Enter Month:");
+            String stMonth=input.next();
+            Connector.setPreparedStatementString(1, stMonth);
+            System.out.println("Enter Year:");
+            stMonth=input.next();
+            Connector.setPreparedStatementString(2, stMonth);
+            ResultSet rs = Connector.executePreparedQuery();
+            String leftAlignFormat = "|   %-13s  |  %-16s   |   %-15s  |      %-14s |      %-15s |      %-18s     |%n";
+            System.out.format("+------------------+---------------------+---------------------+--------------------+----------------------+---------------------------------+%n");
+            System.out.format("|  Start Date      |    End Date         |      Medicine Name  |     Test Name      |      Test Lab        |          Test Result            |%n");
+            System.out.format("+------------------+---------------------+---------------------+--------------------+----------------------+---------------------------------+%n");
 
-	}
+            while(rs.next()) {
+                System.out.format(leftAlignFormat,rs.getString(2),rs.getString(3),rs.getString(6),rs.getString( 7),rs.getString(8),rs.getString(9));
+            }
+            System.out.println();
+        } catch(SQLException e) {
+            System.out.println("Error occured, try again"+e.getMessage());
+        }
+    }
+
 
     private static void viewBillingRecord() {
+        try {
+            Connector.createPreparedStatement(Constants.getBillingRecordsForPatient);
+            Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
+            ResultSet rs = Connector.executePreparedQuery();
+            String leftAlignFormat = "|   %-13s  |  %-16s   |   %-14s  |      %-13s |      %-15s |      %-12s     |%n";
+            System.out.format("+------------------+---------------------+---------------------+--------------------+----------------------+---------------------------------+%n");
+            System.out.format("|  Visit Date      |    Payment Method   |      Card Number    |          Fees      |      Payee SSN       |          Billing Address        |%n");
+            System.out.format("+------------------+---------------------+---------------------+--------------------+----------------------+---------------------------------+%n");
 
+            while(rs.next()) {
+                System.out.format(leftAlignFormat,rs.getString(2),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10));
+            }
+            System.out.println();
+        } catch(SQLException e) {
+            System.out.println("Error occured, try again"+e.getMessage());
+        }
     }
 }
 

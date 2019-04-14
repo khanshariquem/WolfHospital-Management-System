@@ -59,6 +59,7 @@ public final class Constants {
 	public static final String updateBRDetails ="update BillingRecord set ? where BillingRecordID = ?";
 	public static final String updateCheckInDetails ="update CheckIn set ? where PatientID = ? and EndDate is NULL";
 
+	public static final String getBillingRecordsForPatient ="select * from  BillingRecord where PatientID = ?";
 
 	/* CREATE TABLES */
 	public static final String createStaffTable ="CREATE TABLE Staff ( StaffID INT NOT NULL AUTO_INCREMENT, Name VARCHAR(100) NOT NULL," +
@@ -130,13 +131,6 @@ public final class Constants {
 			"( 102 ,1002 , '2019-03-10', 002 , 'A' , NULL), " +
 			"( 102 , 1003 ,'2019-03-15', 001 , 'B' , NULL), " +
 			"( 106 ,1004 , '2019-03-17', 003 , 'A' , '2019-03-21');";
-
-
-
-
-
-
-
 
 	public static final String selectPatient ="Select * from Patient";
 	public static final String selectMedicalRecord ="Select * from MedicalRecord";

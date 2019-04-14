@@ -1332,13 +1332,13 @@ public class RegistrationStaff {
 		}
 	}
 
-	private static class InvalidID extends Exception {
+	public static class InvalidID extends Exception {
         public InvalidID(String message) {
             super(message);
         }
     }
 
-    private static class InvalidChoice extends Exception {
+    public static class InvalidChoice extends Exception {
         public InvalidChoice(String message) {
             super(message);
         }
