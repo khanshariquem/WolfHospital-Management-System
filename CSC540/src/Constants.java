@@ -4,18 +4,22 @@ public final class Constants {
 	public static final String doctorRole = "D";
 	public static final String patientRole = "P";
 	public static final String registrationStaffRole = "R";
-	
+	public static final String checkStaff = "select * from Staff where StaffId = ?";
 	public static final String validatePatient = "select * from Patient where PatientID = ?";
+	public static final String validateWard = "select * from Ward where WardNo = ?";
+	public static final String checkBeds = "select * from Bed where WardNo = ? and Status = 'N'";
 	public static final String validateDoctor = "select * from Staff where StaffID = ? and JobTitle = 'Doctor'";
 	public static final String validateRegistrationStaff = "select * from Staff where StaffID = ? and JobTitle <> 'Doctor' and JobTitle <> 'Nurse' ";
 	public static final String validateNurse = "select * from Staff where StaffID = ? and JobTitle = 'Nurse'";
 	
 	public static final String createStaff = "insert into Staff (Name, Address, DOB, ProfTitle, Phone, Gender, JobTitle, Dept) values(?,?,?,?,?,?,?,?)";
-	public static final String createPatient ="insert into Patient(Name, DOB, Address, Gender, Phone, SSN, Completing_Treatment, StaffID) values(?,?,?,?,?,?,?,?)";
+	public static final String createPatient ="insert into Patient(Name, DOB, Address, Gender, Phone, SSN, Processing_Treatment_Plan, Completing_Treatment, StaffID) values(?,?,?,?,?,?,?,?,?)";
 	
-	public static final String createWard ="insert into Ward (Capacity,Charges,StaffID) values (?, ?,?)";
+	public static final String createWard ="insert into Ward (Capacity,Charges,StaffID) values (?,?,?)";
 	public static final String createBed = "insert into Bed(BedID, WardNo, Status) values (?,?,?)";
 	public static final String deletePatient = "DELETE FROM Patient WHERE PatientID = ?";
+	public static final String deleteBeds = "DELETE FROM Bed WHERE WardNo = ?";
+	public static final String deleteWard = "DELETE FROM Ward WHERE WardNo = ?";
 	public static final String deleteStaff = "DELETE FROM Staff WHERE StaffID = ?";
 	public static final String reserveBed = "UPDATE Bed SET Status= CASE WHEN Status='Y' THEN 'N' ELSE Status END Where WardNo = ? AND BedID = ?";
 	public static final String releaseBed = "UPDATE Bed SET Status= CASE WHEN Status='N' THEN 'Y' ELSE Status END Where WardNo = ? AND BedID = ?";
@@ -61,7 +65,7 @@ public final class Constants {
 
 	public static final String createPatientTable ="CREATE TABLE Patient ( PatientID INT NOT NULL AUTO_INCREMENT, " +
 			"Name VARCHAR(100) NOT NULL, DOB DATE NOT NULL, Address VARCHAR(255) NOT NULL,Phone VARCHAR(20) NOT NULL, Gender CHAR(2) NOT NULL," +
-			" SSN VARCHAR(20), StaffID INT NOT NULL,Processing_Treatment_Plan INT ," +
+			" SSN VARCHAR(20), StaffID INT NOT NULL,Processing_Treatment_Plan INT NOT NULL," +
 			"Completing_Treatment CHAR(3) NOT NULL, PRIMARY KEY (PatientID)," +
 			"CONSTRAINT restrict_gender_vals_patient CHECK (Gender IN ('M', 'F', 'NB', 'U')),CONSTRAINT restrict_Treatment_vals CHECK (Completing_Treatment IN ('Yes', 'No'))," +
 			"CONSTRAINT FK_StaffID FOREIGN KEY (StaffID) REFERENCES Staff(StaffID) );";
@@ -75,15 +79,15 @@ public final class Constants {
 	public static final String createTestTable ="CREATE TABLE Test ( TestID INT NOT NULL AUTO_INCREMENT, Name VARCHAR(30) NOT NULL, Cost INT, Lab VARCHAR(30) NOT NULL, Result VARCHAR(255), StaffID INT NOT NULL, MedicalRecordID INT NOT NULL, PRIMARY KEY (TestID), CONSTRAINT FK_StaffIDTest FOREIGN KEY (StaffID) REFERENCES Staff(StaffID), CONSTRAINT FK_MRIDTest FOREIGN KEY (MedicalRecordID) REFERENCES MedicalRecord(MedicalRecordID) );";
 
 	/* DROP TABLES */
-	public static final String dropStaffTable ="DROP TABLE Staff;";
-	public static final String dropPatientTable ="DROP TABLE Patient;";
-	public static final String dropWardTable ="DROP TABLE Ward;";
-	public static final String dropBedTable ="DROP TABLE Bed;";
-	public static final String dropCheckInTable ="DROP TABLE CheckIn;";
-	public static final String dropMedicalRecordTable ="DROP TABLE MedicalRecord;";
-	public static final String dropBillingRecordTable ="DROP TABLE BillingRecord;";
-	public static final String dropMedicineTable ="DROP TABLE Medicine;";
-	public static final String dropTestTable ="DROP TABLE Test;";
+	public static final String dropStaffTable ="DROP TABLE IF EXISTS Staff;";
+	public static final String dropPatientTable ="DROP TABLE IF EXISTS Patient;";
+	public static final String dropWardTable ="DROP TABLE IF EXISTS Ward;";
+	public static final String dropBedTable ="DROP TABLE IF EXISTS Bed;";
+	public static final String dropCheckInTable ="DROP TABLE IF EXISTS  CheckIn;";
+	public static final String dropMedicalRecordTable ="DROP TABLE IF EXISTS MedicalRecord;";
+	public static final String dropBillingRecordTable ="DROP TABLE IF EXISTS BillingRecord;";
+	public static final String dropMedicineTable ="DROP TABLE IF EXISTS Medicine;";
+	public static final String dropTestTable ="DROP TABLE IF EXISTS Test;";
 
 
 	/* Demo Data */

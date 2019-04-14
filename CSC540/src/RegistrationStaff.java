@@ -97,6 +97,7 @@ public class RegistrationStaff {
 				deleteStaff(input);
 				break;
 			case 10:
+				deleteWard(input);
 				break;
 			case 11:
 				deletePatient(input);
@@ -600,22 +601,27 @@ public class RegistrationStaff {
 	
 	private static void reserveBed(Scanner input) {
 		try {
-			Connector.createPreparedStatement(Constants.reserveBed);
 			int temp;
 			System.out.println("Enter Ward ID:");
 			temp = input.nextInt();
-			Connector.setPreparedStatementInt(1, temp);
 			String bedId = null;
 			System.out.println("Enter Bed ID:");
-			bedId = input.next();
-			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-			
-			if(Connector.executeUpdatePreparedQuery() == 1)
-				System.out.println("Bed reserved Successfully");
-	        else {
-	        	System.out.println("Error occured while reserving bed, try again");
-	        }
-	  
+			bedId = input.next();			
+			Connector.createPreparedStatement(Constants.validateWard);
+			Connector.setPreparedStatementInt(1, temp);
+            ResultSet rs =  Connector.executePreparedQuery();
+            if(rs.next()) {
+            	Connector.createPreparedStatement(Constants.reserveBed);
+            	Connector.setPreparedStatementInt(1, temp);
+    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+                if(Connector.executeUpdatePreparedQuery() == 1)
+                	System.out.println("Bed reserved Successfully");
+                else {
+                	System.out.println("Error occured, invalid Bed Id! try again");
+                }
+            } else {
+                System.out.println("Given ward doesn't exist");
+            }	  
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());
@@ -624,63 +630,71 @@ public class RegistrationStaff {
 	
 	private static void createBillingRecord(Scanner input) throws SQLException {
 		try {
-			Connector.setAutoCommit(false);
 			System.out.println("Enter Patient ID:");
 			int patientId = input.nextInt();
 			
-			Connector.createPreparedStatementWithKeys(Constants.createMedicalRecord);
-			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-			Connector.setPreparedStatementInt(2, patientId);
-			Connector.executeUpdatePreparedQuery();
-			ResultSet rs = Connector.getGeneratedKeys();
-			int medId = 0;
-			if(rs.next())
-				medId = rs.getInt(1);
-			else
-				throw new SQLException();
-			Connector.createPreparedStatement(Constants.createBillingRecord);
-			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-			Connector.setPreparedStatementInt(2, patientId);
-			Connector.setPreparedStatementInt(3, medId);
-			System.out.println("Enter Payment Method:");
-			String paymentMethod = input.next();
-			Connector.setPreparedStatementString(4, paymentMethod);
-			System.out.println("Do you want to enter card details(if applicable)? (Y/N):");
-			String temp = input.next();
-			if(temp.equals("Y")) {
-				System.out.println("Enter card details:");
-				temp = input.next();
-				Connector.setPreparedStatementString(5, temp);
-			}
-			System.out.println("Enter Fees:");
-			float fees = input.nextFloat();
-			Connector.setPreparedStatementFloat(6, fees);
-			System.out.println("Do you want to enter PayeeSSN(optional)? (Y/N):");
-			temp = input.next();
-			if(temp.equals("Y")) {
-				System.out.println("Enter PayeeSSN:");
-				temp = input.next();
-				Connector.setPreparedStatementString(7, temp);
-			}
-			System.out.println("Do you want to enter Billing Address(if applicable)? (Y/N):");
-			temp = input.next();
-			if(temp.equals("Y")) {
-				System.out.println("Enter Billing Address:");
-				temp = input.next();
-				Connector.setPreparedStatementString(8, temp);
-			}			
-			Connector.executeUpdatePreparedQuery();
-			Connector.commit();
-			System.out.println("Billing record created successfully");
+			Connector.createPreparedStatement(Constants.validatePatient);
+			Connector.setPreparedStatementInt(1, patientId);
+            ResultSet res =  Connector.executePreparedQuery();
+            if(res.next()) {
+            	Connector.setAutoCommit(false);
+     			Connector.createPreparedStatement(Constants.createMedicalRecord);
+     			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
+     			Connector.setPreparedStatementInt(2, patientId);
+     			Connector.executeUpdatePreparedQuery();
+     			ResultSet rs = Connector.getGeneratedKeys();
+     			int medId = 0;
+     			if(rs.next())
+     				medId = rs.getInt(1);
+     			else
+     				throw new SQLException();
+     			Connector.createPreparedStatement(Constants.createBillingRecord);
+     			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
+     			Connector.setPreparedStatementInt(2, patientId);
+     			Connector.setPreparedStatementInt(3, medId);
+     			System.out.println("Enter Payment Method:");
+     			String paymentMethod = input.next();
+     			Connector.setPreparedStatementString(4, paymentMethod);
+     			if(!paymentMethod.equalsIgnoreCase("cash")) {
+     				
+     				System.out.println("Enter card/insurance details:");
+     				String temp = input.next();
+     				Connector.setPreparedStatementString(5, temp);
+     				System.out.println("Enter billing address:");
+     				temp = input.next();
+     				Connector.setPreparedStatementString(8, temp);
+     			} else {
+     				Connector.setPreparedStatementString(5, null);
+     				Connector.setPreparedStatementString(8, null);
+     			}
+     		
+     			System.out.println("Enter Fees:");
+     			float fees = input.nextFloat();
+     			Connector.setPreparedStatementFloat(6, fees);
+     			System.out.println("Do you want to enter PayeeSSN(optional)? (Y/N):");
+     			String temp = input.next();
+     			if(temp.equals("Y")) {
+     				System.out.println("Enter PayeeSSN:");
+     				temp = input.next();
+     				Connector.setPreparedStatementString(7, temp);
+     			} else {
+     				Connector.setPreparedStatementString(7, null);
+     			}		
+     			Connector.executeUpdatePreparedQuery();
+     			Connector.commit();
+     			Connector.setAutoCommit(true);
+     			System.out.println("Billing record created successfully");
+     			
+     		} else {
+                System.out.println("Given patient doesn't exist");
+            }  
 		}
-		catch(SQLException e) {
-			Connector.rollback();
-			System.out.println("Error occured while creating entries" + e.getMessage());
-		}
-		Connector.setAutoCommit(true);	
+        catch(SQLException e) {
+ 			Connector.rollback();
+ 			Connector.setAutoCommit(true);
+ 			System.out.println("Error occured while creating entries, please check your input data " + e.getMessage());
+ 		}
 	}
-	
-	
 	
 	private static void assignBed(Scanner input) throws SQLException{
 		try {
@@ -738,30 +752,35 @@ public class RegistrationStaff {
 	
 	private static void releaseBed(Scanner input) {
 		try {
-			Connector.createPreparedStatement(Constants.releaseBed);
 			int temp;
 			System.out.println("Enter Ward ID:");
 			temp = input.nextInt();
-			Connector.setPreparedStatementInt(1, temp);
 			String bedId = null;
 			System.out.println("Enter Bed ID:");
-			bedId = input.next();
-			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-			
-			if(Connector.executeUpdatePreparedQuery() == 1)
-				System.out.println("Bed released Successfully");
-	        else {
-	        	System.out.println("Error occured while releasing bed, try again");
-	        }
+			bedId = input.next();			
+			Connector.createPreparedStatement(Constants.validateWard);
+			Connector.setPreparedStatementInt(1, temp);
+            ResultSet rs =  Connector.executePreparedQuery();
+            if(rs.next()) {
+            	Connector.createPreparedStatement(Constants.releaseBed);
+            	Connector.setPreparedStatementInt(1, temp);
+    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+                if(Connector.executeUpdatePreparedQuery() == 1)
+                	System.out.println("Bed reserved Successfully");
+                else {
+                	System.out.println("Error occured, invalid Bed Id! try again");
+                }
+            } else {
+                System.out.println("Given ward doesn't exist");
+            }	  
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
+			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
 	
 	private static void deleteStaff(Scanner input) {
 		try {
-			Connector.createPreparedStatement(Constants.deleteStaff);
 			int temp;
 			System.out.println("Enter Staff ID:");
 			temp = input.nextInt();
@@ -769,10 +788,11 @@ public class RegistrationStaff {
 				System.out.println("You cannot delete your own account, try again");
 				RegistrationStaff.menu(input);
 			}
-            Connector.createStatement();
-            String checkUser = "select * from Staff where StaffId = " + temp;
-            ResultSet rs =  Connector.executeQuery(checkUser);
+			Connector.createPreparedStatement(Constants.checkStaff);
+			Connector.setPreparedStatementInt(1, temp);
+            ResultSet rs =  Connector.executePreparedQuery();
             if(rs.next()) {
+            	Connector.createPreparedStatement(Constants.deleteStaff);
                 Connector.setPreparedStatementInt(1, temp);
                 if(Connector.executeUpdatePreparedQuery() == 1)
                     System.out.println("Staff deleted Successfully");
@@ -780,34 +800,82 @@ public class RegistrationStaff {
                     System.out.println("Error deleting staff, try again");
                 }
             } else {
-                System.out.println("User doesn't exist");
+                System.out.println("Given staff doesn't exist");
             }
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
+			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
 	
 	private static void deletePatient(Scanner input) {
 		try {
-			Connector.createPreparedStatement(Constants.deletePatient);
 			int temp;
 			System.out.println("Enter Patient ID:");
 			temp = input.nextInt();
-			Connector.setPreparedStatementInt(1, temp);
 			
-			if(Connector.executeUpdatePreparedQuery() == 1)
-				System.out.println("Patient deleted Successfully");
-	        else {
-	        	System.out.println("Error deleting patient, try again");
-	        }
-	  
+			Connector.createPreparedStatement(Constants.validatePatient);
+			Connector.setPreparedStatementInt(1, temp);
+            ResultSet rs =  Connector.executePreparedQuery();
+            if(rs.next()) {
+            	Connector.createPreparedStatement(Constants.deletePatient);
+                Connector.setPreparedStatementInt(1, temp);
+                if(Connector.executeUpdatePreparedQuery() == 1)
+                    System.out.println("Patient deleted Successfully");
+                else {
+                    System.out.println("Error deleting patient, try again");
+                }
+            } else {
+                System.out.println("Given patient doesn't exist");
+            }	  
 		} catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
+			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
 	
 	
+	private static void deleteWard(Scanner input) {
+		try {
+			int temp;
+			System.out.println("Enter Ward Number:");
+			temp = input.nextInt();
+			
+			Connector.createPreparedStatement(Constants.validateWard);
+			Connector.setPreparedStatementInt(1, temp);
+            ResultSet rs =  Connector.executePreparedQuery();
+            if(rs.next()) {
+            	Connector.createPreparedStatement(Constants.checkBeds);
+    			Connector.setPreparedStatementInt(1, temp);
+                ResultSet res =  Connector.executePreparedQuery();
+                if(!res.next()) {
+                	try {
+                		Connector.setAutoCommit(false);
+                    	Connector.createPreparedStatement(Constants.deleteBeds);
+                    	Connector.setPreparedStatementInt(1, temp);
+                    	if(Connector.executeUpdatePreparedQuery() == 0)
+                    		throw new SQLException();
+                    	Connector.createPreparedStatement(Constants.deleteWard);
+                    	Connector.setPreparedStatementInt(1, temp);
+                    	if(Connector.executeUpdatePreparedQuery() != 1)
+                    		throw new SQLException();
+                    	Connector.commit();
+                    	Connector.setAutoCommit(true);
+                    	System.out.println("Ward deleted successfully");
+                	} catch(SQLException e){
+                		Connector.rollback();
+                		Connector.setAutoCommit(true);
+                		System.out.println("Error occured while deleting the ward, try again ");
+                	}
+                } else {
+                	System.out.println("One or more beds of this ward are already assigned to patients, ward delete not allowed!");
+                }
+            } else {
+            	System.out.println("Given ward doesn't exist, try again!");
+            }	  
+		} catch(SQLException e) {
+			System.out.println("Error occured, try again "+e.getMessage());
+		}	
+	}
 	
 	private static void createNewStaff(Scanner input) {
 		try {
@@ -860,7 +928,7 @@ public class RegistrationStaff {
 			System.out.println("Staff Registered Successfully with ID: "+ID);
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured while processing the data"+e.getMessage());
+			System.out.println("Error occured while processing the data "+e.getMessage());
 		}	
 	}
 	
@@ -898,8 +966,12 @@ public class RegistrationStaff {
 			else
 				temp = null;
 			Connector.setPreparedStatementString(6, temp);
-			Connector.setPreparedStatementString(7, "Yes");
-			Connector.setPreparedStatementInt(8, Integer.parseInt(User.id));
+			int plan;
+			System.out.println("Enter Patient Address:");
+			plan = input.nextInt();
+			Connector.setPreparedStatementInt(7, plan);
+			Connector.setPreparedStatementString(8, "Yes");
+			Connector.setPreparedStatementInt(9, Integer.parseInt(User.id));
 			Connector.executeUpdatePreparedQuery();
 			ResultSet rs = Connector.getGeneratedKeys();
 			int ID = 0;
@@ -915,24 +987,26 @@ public class RegistrationStaff {
 	}
 	
 	public static boolean validateNurse(int id) {
+		boolean res = false;
 		try {
-			Connector.createPreparedStatement(Constants.validatePatient);
+			Connector.createPreparedStatement(Constants.validateNurse);
+			Connector.setPreparedStatementInt(1, id);
 			ResultSet result = Connector.executePreparedQuery();
 			if(result.next()) {
-				return true;
+				res = true;
 			}
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
-		return false;
+		return res;
 	}
 	
 	private static void createNewWard(Scanner input) throws SQLException {
 		try {
 			Connector.setAutoCommit(false);
 		    Connector.createPreparedStatement(Constants.createWard);
-		    int capacity = 0 , charges = 0;
+		    int capacity = 0, charges = 0;
 		    System.out.println("Enter Ward Capacity:");
 		    capacity = input.nextInt();
 			Connector.setPreparedStatementInt(1, capacity);
@@ -1007,9 +1081,6 @@ public class RegistrationStaff {
 						Connector.executeUpdatePreparedQuery();
 						bedAlloted=true;
 
-					}
-					else{
-						bedAlloted=false;
 					}
 				}
 				//Update Bed status to unavailable
