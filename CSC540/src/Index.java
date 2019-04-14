@@ -98,8 +98,9 @@ public class Index {
 			}
 		}
 	}
-	private static void dropTables(){
+	private static void dropTables() throws SQLException{
 		try {
+			Connector.setAutoCommit(false);
 			Connector.createPreparedStatement(Constants.dropTestTable);
 			Connector.executeUpdatePreparedQuery();
 			Connector.createPreparedStatement(Constants.dropMedicineTable);
@@ -118,16 +119,21 @@ public class Index {
 			Connector.executeUpdatePreparedQuery();
 			Connector.createPreparedStatement(Constants.dropStaffTable);
 			Connector.executeUpdatePreparedQuery();
+			Connector.commit();
 		}
 		catch(SQLException e) {
+			Connector.rollback();
 			System.out.println("Error occured, try again"+e.getMessage());
 			//e.printStackTrace(System.out);
+		}finally {
+			Connector.setAutoCommit(true);
 		}
 	}
 	
-	private static void createTables() {
+	private static void createTables() throws SQLException {
 		try {
 			//Create Tables
+			Connector.setAutoCommit(false);
 			Connector.createPreparedStatement(Constants.createStaffTable);
 			Connector.executeUpdatePreparedQuery();
 			Connector.createPreparedStatement(Constants.createPatientTable);
@@ -146,17 +152,22 @@ public class Index {
 			Connector.executeUpdatePreparedQuery();
 			Connector.createPreparedStatement(Constants.createTestTable);
 			Connector.executeUpdatePreparedQuery();
-
+			Connector.commit();
 		}
 		catch(SQLException e) {
+			Connector.rollback();
 			System.out.println("Error occured, try again"+e.getMessage());
 			//e.printStackTrace(System.out);
 		}
+		finally {
+			Connector.setAutoCommit(true);
+		}
 	}
 	
-	private static void insertDemoData()
+	private static void insertDemoData() throws SQLException
 	{
 		try {
+			Connector.setAutoCommit(false);
 			//Dummy Data Init
 			Connector.createPreparedStatement(Constants.insertStaffs);
 			Connector.executeUpdatePreparedQuery();
@@ -174,17 +185,26 @@ public class Index {
 
 			Connector.createPreparedStatement(Constants.insertCheckIns);
 			Connector.executeUpdatePreparedQuery();
-
+			Connector.commit();
 		}
 		catch(SQLException e) {
+			Connector.rollback();
 			System.out.println("Error occured, try again"+e.getMessage());
 			//e.printStackTrace(System.out);
 		}
+		finally {
+			Connector.setAutoCommit(true);
+		}
 	}
 	private static void init(){
-			dropTables();
-			createTables();
-			insertDemoData();
+			try {
+				dropTables();
+				createTables();
+				insertDemoData();
+			} catch (SQLException e) {
+				System.out.println("Error occured, try again"+e.getMessage());
+				//e.printStackTrace(System.out);
+			}		
 	}
 	/*
 	public  static void  selectMedicalRecord(){

@@ -73,15 +73,15 @@ public final class Constants {
 	public static final String createTestTable ="CREATE TABLE Test ( TestID INT NOT NULL AUTO_INCREMENT, Name VARCHAR(30) NOT NULL, Cost INT, Lab VARCHAR(30) NOT NULL, Result VARCHAR(255), StaffID INT NOT NULL, MedicalRecordID INT NOT NULL, PRIMARY KEY (TestID), CONSTRAINT FK_StaffIDTest FOREIGN KEY (StaffID) REFERENCES Staff(StaffID), CONSTRAINT FK_MRIDTest FOREIGN KEY (MedicalRecordID) REFERENCES MedicalRecord(MedicalRecordID) );";
 
 	/* DROP TABLES */
-	public static final String dropStaffTable ="DROP TABLE Staff;";
-	public static final String dropPatientTable ="DROP TABLE Patient;";
-	public static final String dropWardTable ="DROP TABLE Ward;";
-	public static final String dropBedTable ="DROP TABLE Bed;";
-	public static final String dropCheckInTable ="DROP TABLE CheckIn;";
-	public static final String dropMedicalRecordTable ="DROP TABLE MedicalRecord;";
-	public static final String dropBillingRecordTable ="DROP TABLE BillingRecord;";
-	public static final String dropMedicineTable ="DROP TABLE Medicine;";
-	public static final String dropTestTable ="DROP TABLE Test;";
+	public static final String dropStaffTable ="DROP TABLE IF EXISTS Staff;";
+	public static final String dropPatientTable ="DROP TABLE IF EXISTS Patient;";
+	public static final String dropWardTable ="DROP TABLE IF EXISTS Ward;";
+	public static final String dropBedTable ="DROP TABLE IF EXISTS Bed;";
+	public static final String dropCheckInTable ="DROP TABLE IF EXISTS  CheckIn;";
+	public static final String dropMedicalRecordTable ="DROP TABLE IF EXISTS MedicalRecord;";
+	public static final String dropBillingRecordTable ="DROP TABLE IF EXISTS BillingRecord;";
+	public static final String dropMedicineTable ="DROP TABLE IF EXISTS Medicine;";
+	public static final String dropTestTable ="DROP TABLE IF EXISTS Test;";
 
 
 	/* Demo Data */
