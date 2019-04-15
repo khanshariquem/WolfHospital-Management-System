@@ -98,15 +98,18 @@ public class Patient {
         } catch (SQLException e) {
             Connector.rollback();
             System.out.println("Error occured while updating your details" + e.getMessage());
-            e.printStackTrace(System.out);
+            //e.printStackTrace(System.out);
         }
         Connector.setAutoCommit(true);
     }
 
     public static void viewMedicalRecord(Scanner input) {
+    	viewPatientMedicalRecord(input,Integer.parseInt(User.id));
+    }  
+    public static void viewPatientMedicalRecord(Scanner input,int id) {
         try {
             Connector.createPreparedStatement(Constants.getMedicalRecordForPatient);
-            Connector.setPreparedStatementInt(3, Integer.parseInt(User.id));
+            Connector.setPreparedStatementInt(3, id);
             System.out.println("Enter Month:");
             String stMonth=input.next();
             Connector.setPreparedStatementString(1, stMonth);
@@ -127,6 +130,8 @@ public class Patient {
             System.out.println("Error occured, try again"+e.getMessage());
         }
     }
+    
+    
 
 
     private static void viewBillingRecord() {

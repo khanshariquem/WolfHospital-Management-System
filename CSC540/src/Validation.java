@@ -19,8 +19,7 @@ public class Validation {
             if(rs.next() )
                 return true;
         } catch (SQLException e) {
-        //todo
-            e.printStackTrace(System.out);
+           System.out.println(e.getMessage());
     }
     return false;
     }

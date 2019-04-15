@@ -20,7 +20,7 @@ public class Connector {
 			con.close();       
 			}
 		catch(Exception e){
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}   	
 	}
 	

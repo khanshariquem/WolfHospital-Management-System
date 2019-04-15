@@ -265,7 +265,7 @@ public class RegistrationStaff {
             } catch (SQLException e) {
                 Connector.rollback(); //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Staff details" + e.getMessage());
-                e.printStackTrace(System.out);
+                //e.printStackTrace(System.out);
             }
         } else {
             System.out.println("No such user exists");
@@ -338,7 +338,7 @@ public class RegistrationStaff {
             } catch (SQLException e) {
                 Connector.rollback();  //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Patient details" + e.getMessage());
-                e.printStackTrace(System.out);
+                //e.printStackTrace(System.out);
             }
         } else {
             System.out.println("No such patient exists");
@@ -396,7 +396,7 @@ public class RegistrationStaff {
             } catch (SQLException e) {
                 Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Ward details" + e.getMessage());
-                e.printStackTrace(System.out);
+                //e.printStackTrace(System.out);
             }
         } else {
             System.out.println("No such ward exists");
@@ -489,7 +489,7 @@ public class RegistrationStaff {
             } catch (SQLException e) {
                 Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating details" + e.getMessage());
-                e.printStackTrace(System.out);
+                //e.printStackTrace(System.out);
             }
         } else {
             System.out.println("Invalid choice");
@@ -579,7 +579,7 @@ public class RegistrationStaff {
             } catch (SQLException e) {
                 Connector.rollback();
                 System.out.println("Error occured while updating details" + e.getMessage());
-                e.printStackTrace(System.out);
+                //e.printStackTrace(System.out);
             }
         } else {
             System.out.println("No such Billing Record exists");
@@ -609,12 +609,16 @@ public class RegistrationStaff {
 	}
 	
 	private static void getActivePatientForDoctor(Scanner input) {
-		try {
-			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
 			int temp;
 			System.out.println("Enter Doctor ID:");
 			temp = input.nextInt();
-			Connector.setPreparedStatementInt(1, temp);
+			getActivePatientForGivenDoctor(temp);
+	}
+	
+	public static void getActivePatientForGivenDoctor(int doctorID) {
+		try {
+			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
+			Connector.setPreparedStatementInt(1, doctorID);
 			ResultSet rs = Connector.executePreparedQuery();
 			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-4s|      %-40s |      %-12s |      %-8s |      %-18s |          %-5s          |  %-8s                |%n";
 			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
@@ -1357,7 +1361,7 @@ public class RegistrationStaff {
 		} catch (SQLException e) {
 			Connector.rollback();   //rol-back in case of error
 			System.out.println("Error occured while processing the data" + e.getMessage());
-            e.printStackTrace(System.out);
+            //e.printStackTrace(System.out);
 		}
 		Connector.setAutoCommit(true);
 

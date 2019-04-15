@@ -11,8 +11,10 @@ public class Doctor {
 			System.out.println("Hi "+User.name+" , Welcome to WolfHospital Management System");
 			System.out.println("Menu:");
 			System.out.println("1. Update Medical Record");
-			System.out.println("2. Sign Out");
-			System.out.println("3. Exit");
+			System.out.println("2. Get My Patients List");
+			System.out.println("3. Get Patient Medical Record");
+			System.out.println("4. Sign Out");
+			System.out.println("5. Exit");
 			System.out.print("Enter Choice : ");
 			int choice = input.nextInt();
 			switch (choice) {
@@ -20,16 +22,33 @@ public class Doctor {
 				updateMedicalRecord(input);
 				break;
 			case 2:
+				RegistrationStaff.getActivePatientForGivenDoctor(Integer.parseInt(User.id));
+				break;	
+			case 3:
+				viewPatientMedicalRecord(input);
+			case 4:
 				User.name = null;
 				Index.homePage(input);
-				break;
-			case 3:
+				break;	
+			case 5:
 				Connector.closeConnection();
 				System.out.println("Thank you for using the application! Hope to see you soon !");
 				System.exit(0);
 			default:
 				System.out.println("Enter correct choice");
 			}
+		}
+	}
+	public static void viewPatientMedicalRecord(Scanner input) {
+		Integer temp;
+		System.out.println("Enter Patient ID:");
+		temp = input.nextInt();
+		Validation val=new Validation("Patient","PatientID",temp.toString());
+		if(val.validatePresence())
+			Patient.viewPatientMedicalRecord(input, temp);
+		else{
+			System.out.println("Patient does not exist.Re-try");
+			Doctor.menu(input);
 		}
 	}
 	public static void updateMedicalRecord(Scanner input){
@@ -157,7 +176,7 @@ public class Doctor {
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured while updating Medicine data"+e.getMessage());
-			e.printStackTrace(System.out);
+			//e.printStackTrace(System.out);
 		}
 	}
 	//Create a new test entry for the Medical record
@@ -275,7 +294,7 @@ public class Doctor {
 			}
 		} catch (SQLException e) {
 			System.out.println("Error occured while adding Test data" + e.getMessage());
-			e.printStackTrace(System.out);
+			//e.printStackTrace(System.out);
 		}
 	}
 
@@ -319,7 +338,7 @@ public class Doctor {
 			System.out.println("Medical Record Updated Successfully");
 		} catch (SQLException e) {
 			System.out.println("Error occured while adding Medical Record  data" + e.getMessage());
-			e.printStackTrace(System.out);
+			//e.printStackTrace(System.out);
 		}
 	}
 
