@@ -48,12 +48,11 @@ public class Doctor {
 						System.out.println("2. Update Medicine");
 						System.out.println("3. Add Test");
 						System.out.println("4. Update Test");
-						System.out.println("5. Update Start Date");
-						System.out.println("6. Update End Date");
-						System.out.println("7. Update Staff ID");
-						System.out.println("8. Exit");
+						System.out.println("5. Update Other Medical Record fields ");
+						System.out.println("6. Go Back");
 						System.out.print("Enter Choice : ");
 						int choice = input.nextInt();
+						input.nextLine();
 						switch (choice) {
 							case 1:
 								createMedicine(input,id);

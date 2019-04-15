@@ -206,55 +206,5 @@ public class Index {
 				//e.printStackTrace(System.out);
 			}		
 	}
-	/*
-	public  static void  selectMedicalRecord(){
-		System.out.println("Medical Record Table");
-		try {
-			Connector.createPreparedStatement(Constants.selectMedicalRecord);
 
-			ResultSet rs = Connector.executePreparedQuery();
-
-			while(rs.next()) {
-				System.out.print(rs.getString(1));
-				System.out.print(rs.getString(2));
-				System.out.print(rs.getDate(3));
-				System.out.print( rs.getString(4));
-				System.out.print( rs.getString(5));
-				System.out.print( rs.getString(6));
-				System.out.println(rs.getString(7));
-				System.out.println( rs.getString(8));
-				System.out.println( rs.getString(9));
-
-			}
-
-
-		} catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
-
-		}
-	}
-	public  static void selectPatient(){
-		System.out.println("Patient Table");
-		try {
-			Connector.createPreparedStatement(Constants.selectPatient);
-
-			ResultSet rs = Connector.executePreparedQuery();
-
-			while(rs.next()) {
-				System.out.print(rs.getString(1));
-				System.out.print(rs.getString(2));
-				System.out.print(rs.getDate(3));
-				System.out.print( rs.getString(4));
-				System.out.print( rs.getString(5));
-				System.out.print( rs.getString(6));
-				System.out.println(rs.getString(7));
-				System.out.println( rs.getString(8));
-
-			}
-
-
-		} catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
-		}
-	}*/
 }

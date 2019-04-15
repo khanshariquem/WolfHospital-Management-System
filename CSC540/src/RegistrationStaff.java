@@ -169,7 +169,8 @@ public class RegistrationStaff {
             case 22:
                 try {
                     check_in(input);
-                } catch (SQLException e) {
+
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
@@ -1226,7 +1227,8 @@ public class RegistrationStaff {
         return false;
 
     }
-	private static void check_in(Scanner input) throws SQLException {
+    // Method to Check-In the patient.
+	private static void check_in(Scanner input) throws SQLException, InvalidID {
 		try {
 			Connector.setAutoCommit(false);
 			Connector.createPreparedStatement(Constants.createCheckIn);
@@ -1234,32 +1236,30 @@ public class RegistrationStaff {
 			System.out.println("Enter Patient ID:");
 			String id = input.next();
 			if(new Validation("Patient","PatientID",id).validatePresence()){
+                boolean bedAlloted=false;
+
 				System.out.println("Enter Ward Number:");
 				int wardNo = input.nextInt();
 				System.out.println("Enter Bed ID:");
 				String bedid = input.next();
-				System.out.println("Enter State Date(yyyy-mm-dd):");
-				String temp = input.next();
-				try {
-					Date sDate = Date.valueOf(temp);
-					Connector.setPreparedStatementDate(3, sDate);
-				} catch (Exception e) {
-					System.out.println("Invalid data, Try agian"+e.getMessage());
-					return ;
-				}
 
-				boolean bedAlloted=false;
-				while(!bedAlloted){
+
 					if(checkBedAvail(wardNo,bedid)){
+                        Connector.createPreparedStatement(Constants.createCheckIn);
+
 						Connector.setPreparedStatementInt(1, Integer.valueOf(User.id));
 						Connector.setPreparedStatementInt(2, Integer.valueOf(id));
-						Connector.setPreparedStatementInt(4, wardNo);
-						Connector.setPreparedStatementString(5, bedid.toUpperCase());
+						Connector.setPreparedStatementInt(3, wardNo);
+						Connector.setPreparedStatementString(4, bedid.toUpperCase());
 						Connector.executeUpdatePreparedQuery();
 						bedAlloted=true;
 
 					}
-				}
+					else{
+
+                       throw new InvalidID("Bed not available");
+                    }
+
 				//Update Bed status to unavailable
 				if(bedAlloted){
 
@@ -1280,12 +1280,12 @@ public class RegistrationStaff {
 		} catch (SQLException e) {
 			Connector.rollback();
 			System.out.println("Error occured while processing the data" + e.getMessage());
+            e.printStackTrace(System.out);
 		}
 		Connector.setAutoCommit(true);
 
 	}
 	public static void getMedicalRecordForPatient(Scanner input) throws SQLException{
-		System.out.println("Start**");
 		try {
 			Connector.createPreparedStatement(Constants.getMedicalRecordForPatient);
 			int temp;
