@@ -1,11 +1,19 @@
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * Class for role - Doctor
+ *
+ */
+
 public class Doctor {
 	
+	/**
+	 * Method to display the menu for Doctor
+	 * @param input
+	 */
 	public static void menu(Scanner input) {
 		while (true) {
 			System.out.println("Hi "+User.name+" , Welcome to WolfHospital Management System");
@@ -46,6 +54,10 @@ public class Doctor {
 			}
 		}
 	}
+	/**
+	 * Method to view the medical record for a patient
+	 * @param input
+	 */
 	public static void viewPatientMedicalRecord(Scanner input) {
 		Integer temp;
 		System.out.println("Enter Patient ID:");
@@ -58,6 +70,12 @@ public class Doctor {
 			Doctor.menu(input);
 		}
 	}
+	/**
+	 * Method to update the medical record of the patient
+	 * the user is provided with menu and the update happens based on user inputs. 
+	 * the number of fields to update are selected by the user.
+	 * @param input
+	 */
 	public static void updateMedicalRecord(Scanner input){
 		{
 			boolean tryUpdate=true;
@@ -113,8 +131,12 @@ public class Doctor {
 
 		}
 	}
-	//Create a new Medicine entry for the Medical record
 
+	/**
+	 * Create a new Medicine entry for the Medical record
+	 * @param input
+	 * @param MRID
+	 */
 	public static void createMedicine(Scanner input,String MRID){
 		{
 			try {
@@ -136,7 +158,12 @@ public class Doctor {
 			}
 		}
 	}
-	//update theMedicine entry for the  given Medical record
+	
+	/**
+	 * update theMedicine entry for the  given Medical record
+	 * @param input
+	 * @param mrid
+	 */
 	public static void updateMedicine(Scanner input, String mrid){
 		try {
 			System.out.println("Enter Medicine Id");
@@ -183,10 +210,14 @@ public class Doctor {
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured while updating Medicine data"+e.getMessage());
-			//e.printStackTrace(System.out);
 		}
 	}
-	//Create a new test entry for the Medical record
+	
+	/**
+	 * Create a new test entry for the Medical record
+	 * @param input
+	 * @param id
+	 */
 	public static void createTest(Scanner input,String id){
 		try {
 			Connector.createPreparedStatement(Constants.createTest);
@@ -209,7 +240,13 @@ public class Doctor {
 			System.out.println("Error occured while adding Test data"+e.getMessage());
 		}
 	}
-	//Method to check if a given medicine id belongs to the given Medical Record
+	
+	/**
+	 * Method to check if a given medicine id belongs to the given Medical Record
+	 * @param medId
+	 * @param mrid
+	 * @return
+	 */
 	static boolean checkMedicineID(String medId, String mrid){
 		try {
 			Connector.createPreparedStatement(Constants.selectMedicine);
@@ -227,7 +264,13 @@ public class Doctor {
 		return false;
 
 	}
-	//Method to check if a given test id belongs to the given Medical Record
+	
+	/**
+	 * Method to check if a given test id belongs to the given Medical Record
+	 * @param testId
+	 * @param mrid
+	 * @return
+	 */
 	static boolean checkTestID(String testId, String mrid){
 		try {
 			Connector.createPreparedStatement(Constants.selectTest);
@@ -245,7 +288,12 @@ public class Doctor {
 		return false;
 
 	}
-	//update the test entry for the  given Medical record
+	
+	/**
+	 * update the test entry for the  given Medical record
+	 * @param input
+	 * @param mrid
+	 */
 	public static void updateTest(Scanner input,String mrid) {
 		try {
 			System.out.println("Enter Test Id");
@@ -301,11 +349,15 @@ public class Doctor {
 			}
 		} catch (SQLException e) {
 			System.out.println("Error occured while adding Test data" + e.getMessage());
-			//e.printStackTrace(System.out);
 		}
 	}
 
-	//Method to update other fields of the Medical record
+	
+	/**
+	 * Method to update other fields of the Medical record
+	 * @param input
+	 * @param id
+	 */
 	public static void updateMROtherFields(Scanner input,String id){
 		try {
 			System.out.println("Choose fields to update( comma separate if multiple fields)");
@@ -345,7 +397,6 @@ public class Doctor {
 			System.out.println("Medical Record Updated Successfully");
 		} catch (SQLException e) {
 			System.out.println("Error occured while adding Medical Record  data" + e.getMessage());
-			//e.printStackTrace(System.out);
 		}
 	}
 
