@@ -261,9 +261,9 @@ public class RegistrationStaff {
                 Connector.createPreparedStatement(temp);
                 Connector.executeUpdatePreparedQuery();     // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
-                Connector.commit(); // Commits the transaction
+                Connector.commit();   // Commits the transaction
             } catch (SQLException e) {
-                Connector.rollback(); //In case of error, the transaction is rollbacked
+                Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Staff details" + e.getMessage());
                 //e.printStackTrace(System.out);
             }
