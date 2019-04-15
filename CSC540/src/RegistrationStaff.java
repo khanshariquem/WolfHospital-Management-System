@@ -1,12 +1,19 @@
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * Class for role - Registraion staff
+ *
+ */
 public class RegistrationStaff {
 		
+	/**
+	 * Method to display the menu for Registration Staff
+	 * @param input
+	 */
 	public static void menu(Scanner input) {
 		while (true) {
 			System.out.println("Hi "+User.name+" , Welcome to WolfHospital Management System");
@@ -201,7 +208,13 @@ public class RegistrationStaff {
 		}
 	}
 
-	// Allows the registration staff to update staff details such as Name, Address, Date of Birth etc.
+	
+	/**
+	 * Allows the registration staff to update staff details such as Name, Address, Date of Birth etc.
+	 * @param input
+	 * @throws SQLException
+	 * @throws InvalidChoice
+	 */
 	private static void updateStaffDetails(Scanner input) throws SQLException, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Staff Id for updation:");
         String id = input.next(); // Takes the staff id on which updation is to be performed
@@ -273,7 +286,14 @@ public class RegistrationStaff {
         Connector.setAutoCommit(true); // Auto commit enabled post transaction
     }
 
-    // Allows the registration staff to update patient details such as Name, Address, Date of Birth, SSN etc.
+    
+    /**
+     * Allows the registration staff to update patient details such as Name, Address, Date of Birth, SSN etc.
+     * @param input
+     * @throws SQLException
+     * @throws InvalidID
+     * @throws InvalidChoice
+     */
     private static void updatePatientDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Patient Id for updation:");
         String id = input.next(); // Takes the patient id on which updation is to be performed
@@ -346,7 +366,14 @@ public class RegistrationStaff {
         Connector.setAutoCommit(true);  // Auto commit enabled post transaction
     }
 
-    // Allows the registration staff to update ward details such as charges, capacity, responsible staff etc.
+    
+    /**
+     * Allows the registration staff to update ward details such as charges, capacity, responsible staff etc.
+     * @param input
+     * @throws SQLException
+     * @throws InvalidID
+     * @throws InvalidChoice
+     */
     private static void updateWardDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Ward No for updation:");
         String id = input.next();   // Takes the ward no on which updation is to be performed
@@ -404,7 +431,14 @@ public class RegistrationStaff {
         Connector.setAutoCommit(true);    // Auto commit enabled post transaction
     }
 
-    // Allows the registration staff to update ward details of an admitted patient and checkout a patient from the hospital
+    
+    /**
+     * // Allows the registration staff to update ward details of an admitted patient and checkout a patient from the hospital
+     * @param input
+     * @throws SQLException
+     * @throws InvalidID
+     * @throws InvalidChoice
+     */
     private static void updateCheckInDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Patient Id for updation:");
         String id = input.next();  // Takes the patient id for which updation is to be performed
@@ -497,7 +531,14 @@ public class RegistrationStaff {
         Connector.setAutoCommit(true);    // Auto commit enabled post transaction
     }
 
-    // Allows the registration staff to update Billing details of an admitted patient such as Visit Date, Payment Method, Card Number etc.
+    
+    /**
+     * // Allows the registration staff to update Billing details of an admitted patient such as Visit Date, Payment Method, Card Number etc.
+     * @param input
+     * @throws SQLException
+     * @throws InvalidID
+     * @throws InvalidChoice
+     */
     private static void updateBRDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Billing Record Id for updation:");
         String id = input.next();   // Takes the billing record id for which updation is to be performed
@@ -587,6 +628,10 @@ public class RegistrationStaff {
         Connector.setAutoCommit(true);
     }
 	
+	/**
+	 * Method to display all the staff details grouped by role
+	 * @param input
+	 */
 	private static void getAllStaffs(Scanner input) {
 		
 		try {
@@ -608,6 +653,10 @@ public class RegistrationStaff {
 		}
 	}
 	
+	/**
+	 * Method to get the patients a doctor
+	 * @param input
+	 */
 	private static void getActivePatientForDoctor(Scanner input) {
 			int temp;
 			System.out.println("Enter Doctor ID:");
@@ -615,6 +664,10 @@ public class RegistrationStaff {
 			getActivePatientForGivenDoctor(temp);
 	}
 	
+	/**
+	 * Method will display the patient list for given doctor ID 
+	 * @param doctorID
+	 */
 	public static void getActivePatientForGivenDoctor(int doctorID) {
 		try {
 			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
@@ -635,7 +688,10 @@ public class RegistrationStaff {
 		}
 	}
 	
-	// method to get the usage details for a given ward
+	
+	/**
+	 * method to get the usage details for a given ward
+	 */
 	private static void getBedUsage() {
 		try {
 			Connector.createStatement();
@@ -657,6 +713,9 @@ public class RegistrationStaff {
 		}
 	}
 	
+	/**
+	 * Method to get the ward usage percentage at any given time
+	 */
 	private static void getWardUsagePercentage() {
 		try {
 			Connector.createStatement();
@@ -673,6 +732,10 @@ public class RegistrationStaff {
 		}
 	}
 	
+	/**
+	 * Method to get the ward usage percentage at any given time
+	 * @return ward usage percentage for resue
+	 */
 	private static float returnWardUsagePercentage() {
 		try {
 			Connector.createStatement();
@@ -690,6 +753,11 @@ public class RegistrationStaff {
 		}
 	}
 	
+	
+	/**
+	 * Method to check the bed availablity based on bed type or ward number
+	 * @param input
+	 */
 	private static void checkBedAvailability(Scanner input) {
 		System.out.println("Check available beds based on following options:");
 		System.out.println("1. Bed Type");
@@ -706,6 +774,10 @@ public class RegistrationStaff {
 		}
 		
 	}
+	/**
+	 * Method to check the bed availablity based on bed type
+	 * @param input
+	 */
 	private static void checkBedAvailabilityBasedOnBedType(Scanner input) {
 		try {
 			Connector.createPreparedStatement(Constants.checkBedAvailabilityBasedOnBedType);
@@ -726,6 +798,10 @@ public class RegistrationStaff {
 		}
 	}
 	
+	/**
+	 * Method to check the bed availablity based on ward number
+	 * @param input
+	 */
 	private static void checkBedAvailabilityBasedWardNo(Scanner input) {
 		try {
 			Connector.createPreparedStatement(Constants.checkBedAvailabilityBasedWardNo);
@@ -747,7 +823,11 @@ public class RegistrationStaff {
 	}
 	
 	
-	// method to reserve a requested bed in the requested ward 
+	
+	/**
+	 * method to reserve a requested bed in the requested ward 
+	 * @param input
+	 */
 	private static void reserveBed(Scanner input) {
 		try {
 			int temp;
@@ -780,7 +860,13 @@ public class RegistrationStaff {
 		}	
 	}
 	
-	// method to create billing record
+	
+	
+	/**
+	 * // method to create billing record
+	 * @param input
+	 * @throws SQLException
+	 */
 	// performed in transaction - medical record is created internally
 	private static void createBillingRecord(Scanner input) throws SQLException {
 		// check if they want to admit the patient
@@ -891,6 +977,11 @@ public class RegistrationStaff {
 		}
 	}
 	
+	/**
+	 * Method to assign a bed to a patient
+	 * @param input
+	 * @throws SQLException
+	 */
 	private static void assignBed(Scanner input) throws SQLException{
 		try {
 			Connector.setAutoCommit(false);
@@ -945,7 +1036,11 @@ public class RegistrationStaff {
 		
 	}
 	
-	// method to release a requested bed in the requested ward 
+	
+	/**
+	 *  method to release a requested bed in the requested ward 
+	 * @param input
+	 */
 	private static void releaseBed(Scanner input) {
 		try {
 			int temp;
@@ -980,7 +1075,11 @@ public class RegistrationStaff {
 		}	
 	}
 	
-	//method to delete a staff
+	
+	/**
+	 * method to delete a staff
+	 * @param input
+	 */
 	private static void deleteStaff(Scanner input) {
 		try {
 			int temp;
@@ -1012,7 +1111,11 @@ public class RegistrationStaff {
 		}	
 	}
 	
-	// method to delete a patient
+	
+	/**
+	 * method to delete a patient
+	 * @param input
+	 */
 	private static void deletePatient(Scanner input) {
 		try {
 			int temp;
@@ -1039,8 +1142,13 @@ public class RegistrationStaff {
 		}	
 	}
 	
-	// method to delete a ward
-	// handled in transaction - ward and all its beds are deleted
+	
+	
+	/**
+	 * method to delete a ward
+	 *  handled in transaction - ward and all its beds are deleted
+	 * @param input
+	 */
 	private static void deleteWard(Scanner input) {
 		try {
 			int temp;
@@ -1093,6 +1201,11 @@ public class RegistrationStaff {
 		}	
 	}
 	
+	
+	/**
+	 * Method to create a new Staff based on user inputs
+	 * @param input
+	 */
 	private static void createNewStaff(Scanner input) {
 		try {
 			Connector.createPreparedStatement(Constants.createStaff);
@@ -1148,6 +1261,10 @@ public class RegistrationStaff {
 		}	
 	}
 	
+	/**
+	 * Method to create a new Patient based on user input.
+	 * @param input
+	 */
 	private static void createNewPatient(Scanner input) {
 		try {
 			Connector.createPreparedStatement(Constants.createPatient);
@@ -1202,6 +1319,11 @@ public class RegistrationStaff {
 		}			
 	}
 	
+	/**
+	 * Method will validate if a nurse is present in the database
+	 * @param id
+	 * @return
+	 */
 	public static boolean validateNurse(int id) {
 		boolean res = false;
 		try {
@@ -1218,6 +1340,13 @@ public class RegistrationStaff {
 		return res;
 	}
 	
+	/**
+	 * This method will create a new Ward based on user inputs
+	 * The method will also create the required beds and assign them to ward
+	 * This is handled in a transaction
+	 * @param input
+	 * @throws SQLException
+	 */
 	private static void createNewWard(Scanner input) throws SQLException {
 		try {
 			Connector.setAutoCommit(false);
@@ -1264,8 +1393,14 @@ public class RegistrationStaff {
 		Connector.setAutoCommit(true);
 		
 	}
-    //Check if a given Ward-bed is free
-     static boolean checkBedAvail(int wardNo,String bedid){
+    
+     /**
+     * Check if a given Ward-bed is free
+     * @param wardNo
+     * @param bedid
+     * @return
+     */
+    static boolean checkBedAvail(int wardNo,String bedid){
 	    try {
             String bedAvailQuery = "select * from Bed where WardNo = ? and BedId = ?";
             Connector.createPreparedStatement(bedAvailQuery);
@@ -1284,7 +1419,10 @@ public class RegistrationStaff {
         return false;
 
     }
-    //Display the Ward and bed status information
+    
+    /**
+     * Display the Ward and bed status information
+     */
     static void displayBedAvail(){
         try {
             String bedAvailQuery = "select * from Bed; ";
@@ -1307,7 +1445,13 @@ public class RegistrationStaff {
 
 
     }
-    // Method to Check-In the patient.
+    
+	/**
+	 * Method to Check-In the patient.
+	 * @param input
+	 * @throws SQLException
+	 * @throws InvalidID
+	 */
 	private static void check_in(Scanner input) throws SQLException, InvalidID {
 		try {
 			Connector.setAutoCommit(false);  //Set auto-commit to false, transaction begins
@@ -1366,7 +1510,12 @@ public class RegistrationStaff {
 		Connector.setAutoCommit(true);
 
 	}
-	//Get Medical Record of a given patient for a given month and year
+	
+	/**
+	 * Get Medical Record of a given patient for a given month and year
+	 * @param input
+	 * @throws SQLException
+	 */
 	public static void getMedicalRecordForPatient(Scanner input) throws SQLException{
 		try {
 			Connector.createPreparedStatement(Constants.getMedicalRecordForPatient);
@@ -1397,7 +1546,12 @@ public class RegistrationStaff {
 		}
 	}
 	
-	// method to return the total count of patients on a given year and month
+	
+	/**
+	 * method to return the total count of patients on a given year and month
+	 * @param input
+	 * @throws SQLException
+	 */
 	public static void getPatientCount(Scanner input) throws SQLException{
 		try {
 			Connector.createPreparedStatement(Constants.getPatientCount);
@@ -1423,7 +1577,12 @@ public class RegistrationStaff {
 		}
 	}
 
-    //Get Medical Record of a given patient within start and end month in a year
+   
+	/**
+	 * Get Medical Record of a given patient within start and end month in a year
+	 * @param input
+	 * @throws SQLException
+	 */
 	public static void getMedicalRecordForPatientBetween(Scanner input) throws SQLException{
 		try {
 			Connector.createPreparedStatement(Constants.getMedicalRecordForPatientBetween);
@@ -1456,12 +1615,20 @@ public class RegistrationStaff {
 		}
 	}
 
+	/**
+	 * Exception class for custom exception
+	 *
+	 */
 	public static class InvalidID extends Exception {
         public InvalidID(String message) {
             super(message);
         }
     }
 
+    /**
+     * Exception class for custom exception
+     *
+     */
     public static class InvalidChoice extends Exception {
         public InvalidChoice(String message) {
             super(message);
