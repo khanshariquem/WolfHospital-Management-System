@@ -1207,7 +1207,7 @@ public class RegistrationStaff {
 		Connector.setAutoCommit(true);
 		
 	}
-
+    //Check if a given Ward-bed is free
      static boolean checkBedAvail(int wardNo,String bedid){
 	    try {
             String bedAvailQuery = "select * from Bed where WardNo = ? and BedId = ?";
@@ -1227,15 +1227,39 @@ public class RegistrationStaff {
         return false;
 
     }
+    //Display the Ward and bed status information
+    static void displayBedAvail(){
+        try {
+            String bedAvailQuery = "select * from Bed; ";
+            Connector.createPreparedStatement(bedAvailQuery);
+            Connector.executeUpdatePreparedQuery();
+            ResultSet rs = Connector.executePreparedQuery();
+            String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |%n";
+            System.out.format("+------------------+-------------+-------------+%n");
+            System.out.format("| BedID            |  WardNo     |    Status   |%n");
+            System.out.format("+------------------+-------------+-------------+%n");
+
+            while(rs.next()) {
+                System.out.format(leftAlignFormat,rs.getString(1),rs.getInt(2),rs.getString(3));
+
+            }
+        }
+        catch(Exception e){
+            System.out.println("error occurred while displaying bed availability");
+        }
+
+
+    }
     // Method to Check-In the patient.
 	private static void check_in(Scanner input) throws SQLException, InvalidID {
 		try {
-			Connector.setAutoCommit(false);
+			Connector.setAutoCommit(false);  //Set auto-commit to false, transaction begins
 			Connector.createPreparedStatement(Constants.createCheckIn);
 			//int capacity = 0 , charges = 0;
 			System.out.println("Enter Patient ID:");
 			String id = input.next();
 			if(new Validation("Patient","PatientID",id).validatePresence()){
+                displayBedAvail();  //display the list of available beds
                 boolean bedAlloted=false;
 
 				System.out.println("Enter Ward Number:");
@@ -1251,7 +1275,7 @@ public class RegistrationStaff {
 						Connector.setPreparedStatementInt(2, Integer.valueOf(id));
 						Connector.setPreparedStatementInt(3, wardNo);
 						Connector.setPreparedStatementString(4, bedid.toUpperCase());
-						Connector.executeUpdatePreparedQuery();
+						Connector.executeUpdatePreparedQuery();  //create checkin for the patient in the alloted bed
 						bedAlloted=true;
 
 					}
@@ -1266,25 +1290,26 @@ public class RegistrationStaff {
 						Connector.createPreparedStatement(Constants.reserveBed);
 						Connector.setPreparedStatementInt(1, wardNo);
 						Connector.setPreparedStatementString(2, bedid.toUpperCase());
-						Connector.executeUpdatePreparedQuery() ;
+						Connector.executeUpdatePreparedQuery() ; //update the bed to not available
 
 				}
 
-				Connector.commit();
-				System.out.println("Ward added Successfully");
+				Connector.commit();  //commit the transaction
+				System.out.println("Patient check-in success");
 			}
 			else{
 				System.out.println("Incorrect Patient Id, retry");
 			}
 
 		} catch (SQLException e) {
-			Connector.rollback();
+			Connector.rollback();   //rol-back in case of error
 			System.out.println("Error occured while processing the data" + e.getMessage());
             e.printStackTrace(System.out);
 		}
 		Connector.setAutoCommit(true);
 
 	}
+	//Get Medical Record of a given patient for a given month and year
 	public static void getMedicalRecordForPatient(Scanner input) throws SQLException{
 		try {
 			Connector.createPreparedStatement(Constants.getMedicalRecordForPatient);
@@ -1341,10 +1366,9 @@ public class RegistrationStaff {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
-	
-	
+
+    //Get Medical Record of a given patient within start and end month in a year
 	public static void getMedicalRecordForPatientBetween(Scanner input) throws SQLException{
-		System.out.println("Start**");
 		try {
 			Connector.createPreparedStatement(Constants.getMedicalRecordForPatientBetween);
 			int temp;

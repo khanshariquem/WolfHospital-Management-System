@@ -39,7 +39,8 @@ public final class Constants {
 	/*Viviniya Changes*/
 
 	public static final String getMedicalRecordForPatient = " Select MR.*, " +
-			"M.Name AS Medicine_Name ,M.Manufacturer AS Medicine_Manuf, T.Name As Test_Name,T.Lab As Test_Lab,T.Result As Test_Result, T.StaffID AS Test_Staff FROM MedicalRecord MR LEFT JOIN Medicine M ON MR.MedicalRecordID = M.MedicalRecordID LEFT JOIN Test T ON MR.MedicalRecordID= T.MedicalRecordID" +
+			"M.Name AS Medicine_Name ,M.Manufacturer AS Medicine_Manuf, T.Name As Test_Name,T.Lab As Test_Lab,T.Result As Test_Result, T.StaffID AS Test_Staff" +
+            " FROM MedicalRecord MR LEFT JOIN Medicine M ON MR.MedicalRecordID = M.MedicalRecordID LEFT JOIN Test T ON MR.MedicalRecordID= T.MedicalRecordID" +
 			" WHERE MONTH(StartDate) = ? AND YEAR(StartDate) = ? AND PatientID = ?";
 	public static final String getMedicalRecordForPatientBetween = "Select MR.*, " +
 			"M.Name AS Medicine_Name ,M.Manufacturer AS Medicine_Manuf, T.Name As Test_Name,T.Lab As Test_Lab,T.Result As Test_Result, T.StaffID AS Test_Staff FROM MedicalRecord MR LEFT JOIN Medicine M ON MR.MedicalRecordID = M.MedicalRecordID LEFT JOIN Test T ON MR.MedicalRecordID= T.MedicalRecordID " +
@@ -48,9 +49,11 @@ public final class Constants {
 	public static final String createCheckIn ="INSERT INTO CheckIn ( StaffID, PatientID, StartDate, WardNo,BedID) VALUES (?,?, CURDATE(), ?,?)";
 	public static final String createMedicine =" insert into Medicine (Name, Manufacturer, MedicalRecordID) values (?,?,?)";
 	public static final String createTest =" insert into Test (Name, Lab, StaffID, MedicalRecordID) values (?,?,?,?)";
-	public static final String updateMedicine ="update Medicine set ? where MedicalRecordID = ?";
-	public static final String updateTest ="update Test set ? where MedicalRecordID = ?";
+	public static final String updateMedicine ="update Medicine set ? where MedicineID = ?";
+	public static final String updateTest ="update Test set ? where  TestID = ?";
 	public static final String updateMROtherField="update MedicalRecord set ? where MedicalRecordID = ?";
+    public static final String selectMedicine ="Select MedicalRecordID from Medicine WHERE MedicineID = ?";
+    public static final String selectTest ="Select MedicalRecordID from Test WHERE TestID = ?";
 
 
 	public static final String updateStaffDetails ="update Staff set ? where StaffId = ?";
@@ -132,7 +135,7 @@ public final class Constants {
 			"( 102 , 1003 ,'2019-03-15', 001 , 'B' , NULL), " +
 			"( 106 ,1004 , '2019-03-17', 003 , 'A' , '2019-03-21');";
 
-	public static final String selectPatient ="Select * from Patient";
+	public static final String selectPatient ="Select MedicalRecordID from Medicine WHERE TestID = ?";
 	public static final String selectMedicalRecord ="Select * from MedicalRecord";
 }
 

@@ -98,6 +98,7 @@ public class Index {
 			}
 		}
 	}
+	// Method to drop all tables
 	private static void dropTables() throws SQLException{
 		try {
 			Connector.setAutoCommit(false);
