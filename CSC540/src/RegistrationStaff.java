@@ -1418,8 +1418,6 @@ public class RegistrationStaff {
 				System.out.format(leftAlignFormat,rs.getInt(1),rs.getInt(2),rs.getInt(3));
 
 			}
-
-
 		} catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}

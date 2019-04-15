@@ -12,9 +12,10 @@ public class Doctor {
 			System.out.println("Menu:");
 			System.out.println("1. Update Medical Record");
 			System.out.println("2. Get My Patients List");
-			System.out.println("3. Get Patient Medical Record");
-			System.out.println("4. Sign Out");
-			System.out.println("5. Exit");
+			System.out.println("3. Get Patient Medical Record by MM/YYY");
+            System.out.println("4. Get Patient Medical Record between start and end period");
+			System.out.println("5. Sign Out");
+			System.out.println("6. Exit");
 			System.out.print("Enter Choice : ");
 			int choice = input.nextInt();
 			switch (choice) {
@@ -27,10 +28,16 @@ public class Doctor {
 			case 3:
 				viewPatientMedicalRecord(input);
 			case 4:
+				try {
+					RegistrationStaff.getMedicalRecordForPatientBetween(input);
+				} catch (SQLException e) {
+					System.out.println(e.getMessage());
+				}
+			case 5:
 				User.name = null;
 				Index.homePage(input);
 				break;	
-			case 5:
+			case 6:
 				Connector.closeConnection();
 				System.out.println("Thank you for using the application! Hope to see you soon !");
 				System.exit(0);
