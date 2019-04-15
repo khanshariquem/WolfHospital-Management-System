@@ -140,7 +140,7 @@ public class RegistrationStaff {
 				try {
 					createBillingRecord(input);
 				} catch (SQLException e) {
-					System.out.println(e.getMessage());
+					System.out.println("Error occured while checking the bed availability, try again");
 				}
 				break;
 			case 17:
@@ -664,6 +664,23 @@ public class RegistrationStaff {
 		}
 	}
 	
+	private static float returnWardUsagePercentage() {
+		try {
+			Connector.createStatement();
+			ResultSet rs = Connector.executeQuery(Constants.getWardUsagePercentage);
+			if(rs.next()) {
+				return rs.getFloat(1)*100;
+			}
+			else {
+				return (float) -1.0;
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Error occured, try again." + e.getMessage());
+			return (float) -1.0;
+		}
+	}
+	
 	private static void checkBedAvailability(Scanner input) {
 		System.out.println("Check available beds based on following options:");
 		System.out.println("1. Bed Type");
@@ -750,71 +767,91 @@ public class RegistrationStaff {
 	}
 	
 	private static void createBillingRecord(Scanner input) throws SQLException {
-		try {
-			System.out.println("Enter Patient ID:");
-			int patientId = input.nextInt();
-			
-			Connector.createPreparedStatement(Constants.validatePatient);
-			Connector.setPreparedStatementInt(1, patientId);
-            ResultSet res =  Connector.executePreparedQuery();
-            if(res.next()) {
-            	Connector.setAutoCommit(false);
-     			Connector.createPreparedStatement(Constants.createMedicalRecord);
-     			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-     			Connector.setPreparedStatementInt(2, patientId);
-     			Connector.executeUpdatePreparedQuery();
-     			ResultSet rs = Connector.getGeneratedKeys();
-     			int medId = 0;
-     			if(rs.next())
-     				medId = rs.getInt(1);
-     			else
-     				throw new SQLException();
-     			Connector.createPreparedStatement(Constants.createBillingRecord);
-     			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-     			Connector.setPreparedStatementInt(2, patientId);
-     			Connector.setPreparedStatementInt(3, medId);
-     			System.out.println("Enter Payment Method:");
-     			String paymentMethod = input.next();
-     			Connector.setPreparedStatementString(4, paymentMethod);
-     			if(!paymentMethod.equalsIgnoreCase("cash")) {
-     				
-     				System.out.println("Enter card/insurance details:");
-     				String temp = input.next();
-     				Connector.setPreparedStatementString(5, temp);
-     				System.out.println("Enter billing address:");
-     				temp = input.next();
-     				Connector.setPreparedStatementString(8, temp);
-     			} else {
-     				Connector.setPreparedStatementString(5, null);
-     				Connector.setPreparedStatementString(8, null);
-     			}
-     		
-     			System.out.println("Enter Fees:");
-     			float fees = input.nextFloat();
-     			Connector.setPreparedStatementFloat(6, fees);
-     			System.out.println("Do you want to enter PayeeSSN(optional)? (Y/N):");
-     			String temp = input.next();
-     			if(temp.equals("Y")) {
-     				System.out.println("Enter PayeeSSN:");
-     				temp = input.next();
-     				Connector.setPreparedStatementString(7, temp);
-     			} else {
-     				Connector.setPreparedStatementString(7, null);
-     			}		
-     			Connector.executeUpdatePreparedQuery();
-     			Connector.commit();
-     			Connector.setAutoCommit(true);
-     			System.out.println("Billing record created successfully");
-     			
-     		} else {
-                System.out.println("Given patient doesn't exist");
-            }  
+		System.out.println("Do you want to admit the patient(Y/N)?:");
+		String admit = input.next();
+		boolean bedAvailable = true;
+		if(admit.equalsIgnoreCase("Y")) {
+			float result = returnWardUsagePercentage();
+			if(result < 0.0) {
+				throw new SQLException();
+			} else if (result < 100.0){
+				bedAvailable = true;
+			} else 
+				bedAvailable = false;
+		} 
+		if(!bedAvailable) {
+			System.out.println("No empty bed available to check in the patient");
+		} else {
+			try {
+				System.out.println("Enter Patient ID:");
+				int patientId = input.nextInt();
+				System.out.println("Enter the Id of the Responsible Doctor for this treatment:");
+				int docId = input.nextInt();
+				
+				Connector.createPreparedStatement(Constants.validatePatient);
+				Connector.setPreparedStatementInt(1, patientId);
+	            ResultSet patRes =  Connector.executePreparedQuery();
+	            Connector.createPreparedStatement(Constants.validateDoctor);
+				Connector.setPreparedStatementInt(1, docId);
+	            ResultSet docRes =  Connector.executePreparedQuery();
+	            if(patRes.next() && docRes.next()) {
+	            	Connector.setAutoCommit(false);
+	     			Connector.createPreparedStatement(Constants.createMedicalRecord);
+	     			Connector.setPreparedStatementInt(1, docId);
+	     			Connector.setPreparedStatementInt(2, patientId);
+	     			Connector.executeUpdatePreparedQuery();
+	     			ResultSet rs = Connector.getGeneratedKeys();
+	     			int medId = 0;
+	     			if(rs.next())
+	     				medId = rs.getInt(1);
+	     			else
+	     				throw new SQLException();
+	     			Connector.createPreparedStatement(Constants.createBillingRecord);
+	     			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
+	     			Connector.setPreparedStatementInt(2, patientId);
+	     			Connector.setPreparedStatementInt(3, medId);
+	     			System.out.println("Enter Payment Method(Card/Cash/Insurance):");
+	     			String paymentMethod = input.next();
+	     			Connector.setPreparedStatementString(4, paymentMethod);
+	     			if(!paymentMethod.equalsIgnoreCase("cash")) {
+	     				System.out.println("Enter card/insurance details:");
+	     				String temp = input.next();
+	     				Connector.setPreparedStatementString(5, temp);
+	     				System.out.println("Enter billing address:");
+	     				temp = input.next();
+	     				Connector.setPreparedStatementString(8, temp);
+	     			} else {
+	     				Connector.setPreparedStatementString(5, null);
+	     				Connector.setPreparedStatementString(8, null);
+	     			}
+	     		
+	     			System.out.println("Enter Fees:");
+	     			float fees = input.nextFloat();
+	     			Connector.setPreparedStatementFloat(6, fees);
+	     			System.out.println("Do you want to enter PayeeSSN(optional)? (Y/N):");
+	     			String temp = input.next();
+	     			if(temp.equals("Y")) {
+	     				System.out.println("Enter PayeeSSN:");
+	     				temp = input.next();
+	     				Connector.setPreparedStatementString(7, temp);
+	     			} else {
+	     				Connector.setPreparedStatementString(7, null);
+	     			}		
+	     			Connector.executeUpdatePreparedQuery();
+	     			Connector.commit();
+	     			Connector.setAutoCommit(true);
+	     			System.out.println("Billing record created successfully");
+	     			
+	     		} else {
+	                System.out.println("Given patient ID or Responsible doctor ID doesn't exist, try again!");
+	            }  
+			}
+	        catch(SQLException e) {
+	 			Connector.rollback();
+	 			Connector.setAutoCommit(true);
+	 			System.out.println("Error occured while creating entries, please check your input data " + e.getMessage());
+	 		}
 		}
-        catch(SQLException e) {
- 			Connector.rollback();
- 			Connector.setAutoCommit(true);
- 			System.out.println("Error occured while creating entries, please check your input data " + e.getMessage());
- 		}
 	}
 	
 	private static void assignBed(Scanner input) throws SQLException{
@@ -1170,7 +1207,25 @@ public class RegistrationStaff {
 		
 	}
 
+     static boolean checkBedAvail(int wardNo,String bedid){
+	    try {
+            String bedAvailQuery = "select * from Bed where WardNo = ? and BedId = ?";
+            Connector.createPreparedStatement(bedAvailQuery);
+            Connector.setPreparedStatementInt(1, wardNo);
+            Connector.setPreparedStatementString(2, bedid);
+            Connector.executeUpdatePreparedQuery();
+            ResultSet rs = Connector.executePreparedQuery();
+            if (rs.next()) {
+                if(rs.getString("Status").charAt(0) == 'Y')
+                    return true;
+            }
+        }
+        catch(Exception e){
+            System.out.println("error occurred while check bed status");
+        }
+        return false;
 
+    }
 	private static void check_in(Scanner input) throws SQLException {
 		try {
 			Connector.setAutoCommit(false);
@@ -1195,8 +1250,7 @@ public class RegistrationStaff {
 
 				boolean bedAlloted=false;
 				while(!bedAlloted){
-					//check bed availability
-					if(true){
+					if(checkBedAvail(wardNo,bedid)){
 						Connector.setPreparedStatementInt(1, Integer.valueOf(User.id));
 						Connector.setPreparedStatementInt(2, Integer.valueOf(id));
 						Connector.setPreparedStatementInt(4, wardNo);

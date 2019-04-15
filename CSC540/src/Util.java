@@ -49,7 +49,10 @@ public class Util {
     		s = "Male";
     	else if(code.equals("F"))
     		s = "Female";
-    	
+    	else if(code.equals("U"))
+    		s = "Unknown";
+    	else if(code.equals("NB"))
+    		s = "Non Binary";
     	return s;
     }
 
