@@ -1,20 +1,32 @@
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * the utilities used in the project are defined in this class
+ *
+ */
 public class Util {
-    //Use method to create update query of type "update TableName set ? where ID = ?";
 
+    /**
+     * Use method to create update query of type "update TableName set ? where ID = ?";
+     * @param query1
+     * @param query2
+     * @param constQuery
+     * @return
+     */
     public static String createUpdateStatement(String query1,String query2,String constQuery ){
-//        Connector.createPreparedStatement(Constants.updateMedicine);
-//        StringBuffer buffer = new StringBuffer(temp);
-//        temp = buffer.reverse().toString().replaceFirst("\\?",query2);
-
         query1 = query1.substring(0, query1.length() - 1);
         String temp = constQuery.replaceFirst("\\?",query1 );
         String finalStr = temp.replaceFirst("\\?",query2 );
         return finalStr;
     }
-
+    
+    
+    /**
+     * Method to get the age from date
+     * @param dateOfBirth
+     * @return age
+     */
     public static int getAge(Date dateOfBirth) {
 
         Calendar today = Calendar.getInstance();
@@ -43,6 +55,11 @@ public class Util {
         return age;
     }
     
+    /** 
+     * Method to return the full string of gender from respective input code
+     * @param code
+     * @return full gender in String
+     */
     public static String getGender(String code) {
     	String s = "";
     	if(code.equals("M"))

@@ -136,7 +136,7 @@ public class Connector {
 	}
 	
 	/** 
-	 * This method will execue the query on the databse and return the result
+	 * This method will execute the query on the database and return the result
 	 * @param query
 	 * @return ResultSet
 	 * @throws SQLException

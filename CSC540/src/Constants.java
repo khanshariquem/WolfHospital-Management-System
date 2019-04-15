@@ -1,4 +1,8 @@
 
+/**
+ * all the constants used in the project are defined in Constants class.
+ *
+ */
 public final class Constants {
 	
 	public static final String doctorRole = "D";
