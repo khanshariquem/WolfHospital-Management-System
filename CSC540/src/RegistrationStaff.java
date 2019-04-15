@@ -200,13 +200,14 @@ public class RegistrationStaff {
 		}
 	}
 
+	// Allows the registration staff to update staff details such as Name, Address, Date of Birth etc.
 	private static void updateStaffDetails(Scanner input) throws SQLException, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Staff Id for updation:");
-        String id = input.next();
+        String id = input.next(); // Takes the staff id on which updation is to be performed
         Validation val = new Validation("Staff", "StaffId", id);
-        if (val.validatePresence()) {
+        if (val.validatePresence()) {  // Validates if the staff exists
             try {
-                Connector.setAutoCommit(false);
+                Connector.setAutoCommit(false); //Auto commit disabled to implement update of all fields in one transaction
                 System.out.println("Choose fields to update (comma separate if multiple fields)");
                 System.out.println("1.Name  2.Address  3.DOB  4.ProfTitle  5.Phone  6.Gender  7.JobTitle  8.Dept");
                 String choices = input.next();
@@ -248,38 +249,39 @@ public class RegistrationStaff {
                             update.put("Dept", input.nextLine());
                             break;
                         default:
-                            throw new InvalidChoice("Invalid menu option");
+                            throw new InvalidChoice("Invalid menu option");   // Throws a custom exception if user chooses invalid menu option
                     }
                 }
                 String updateQuery = "";
-                for (String key : update.keySet()) {
+                for (String key : update.keySet()) { // All update key, values are concatenated
                     updateQuery += key + " = '" + update.get(key) + "',";
                 }
                 String temp = Util.createUpdateStatement(updateQuery, id, Constants.updateStaffDetails);
                 Connector.createPreparedStatement(temp);
-                Connector.executeUpdatePreparedQuery();
+                Connector.executeUpdatePreparedQuery();     // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
-                Connector.commit();
+                Connector.commit(); // Commits the transaction
             } catch (SQLException e) {
-                Connector.rollback();
+                Connector.rollback(); //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Staff details" + e.getMessage());
                 e.printStackTrace(System.out);
             }
         } else {
             System.out.println("No such user exists");
         }
-        Connector.setAutoCommit(true);
+        Connector.setAutoCommit(true); // Auto commit enabled post transaction
     }
 
+    // Allows the registration staff to update patient details such as Name, Address, Date of Birth, SSN etc.
     private static void updatePatientDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Patient Id for updation:");
-        String id = input.next();
+        String id = input.next(); // Takes the patient id on which updation is to be performed
         Validation val = new Validation("Patient", "PatientId", id);
-        if (val.validatePresence()) {
+        if (val.validatePresence()) { // Validates if the patient exists
             try {
-                Connector.setAutoCommit(false);
+                Connector.setAutoCommit(false); //Auto commit disabled to implement update of all fields in one transaction
                 System.out.println("Choose fields to update (comma separate if multiple fields)");
-                System.out.println("1.Name  2.Address  3.DOB  4.Phone  5.Gender  6.SSN  7.StaffID  8.Processing Treatment Plan  9.Completing Treatment");
+                System.out.println("1.Name  2.Address  3.DOB  4.Phone  5.Gender  6.SSN   7.Processing Treatment Plan  8.Completing Treatment");
                 String choices = input.next();
                 input.nextLine();
                 String[] choice = choices.split(",");
@@ -311,54 +313,46 @@ public class RegistrationStaff {
                             update.put("SSN", input.nextLine());
                             break;
                         case "7":
-                            System.out.println("Enter StaffID");
-                            String staffId = input.nextLine();
-                            Validation staffVal = new Validation("Staff", "StaffID", staffId);
-                            if(staffVal.validatePresence()) {
-                                update.put("StaffID", staffId);
-                            } else {
-                                throw new InvalidID("Invalid StaffId, transaction aborted");
-                            }
-                            break;
-                        case "8":
                             System.out.println("Enter Processing_Treatment_Plan");
                             update.put("Processing_Treatment_Plan", input.nextLine());
                             break;
-                        case "9":
+                        case "8":
                             System.out.println("Enter Completing_Treatment (Yes/No)");
                             update.put("Completing_Treatment", input.nextLine());
                             break;
                         default:
-                            throw new InvalidChoice("Invalid menu option");
+                            throw new InvalidChoice("Invalid menu option");   // Throws a custom exception if user chooses invalid menu option
                     }
                 }
+                update.put("StaffID", User.id);
                 String updateQuery = "";
-                for (String key : update.keySet()) {
+                for (String key : update.keySet()) { // All update key, values are concatenated
                     updateQuery += key + " = '" + update.get(key) + "',";
                 }
                 String temp = Util.createUpdateStatement(updateQuery, id, Constants.updatePatientDetails);
                 Connector.createPreparedStatement(temp);
-                Connector.executeUpdatePreparedQuery();
+                Connector.executeUpdatePreparedQuery();  // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
-                Connector.commit();
+                Connector.commit();  // Commits the transaction
             } catch (SQLException e) {
-                Connector.rollback();
+                Connector.rollback();  //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Patient details" + e.getMessage());
                 e.printStackTrace(System.out);
             }
         } else {
             System.out.println("No such patient exists");
         }
-        Connector.setAutoCommit(true);
+        Connector.setAutoCommit(true);  // Auto commit enabled post transaction
     }
 
+    // Allows the registration staff to update ward details such as charges, capacity, responsible staff etc.
     private static void updateWardDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Ward No for updation:");
-        String id = input.next();
+        String id = input.next();   // Takes the ward no on which updation is to be performed
         Validation val = new Validation("Ward", "WardNo", id);
-        if (val.validatePresence()) {
+        if (val.validatePresence()) {  // Validates if the ward exists
             try {
-                Connector.setAutoCommit(false);
+                Connector.setAutoCommit(false);  //Auto commit disabled to implement update of all fields in one transaction
                 System.out.println("Choose fields to update (comma separate if multiple fields)");
                 System.out.println("1.Charges  2.Capacity  3.StaffID");
                 String choices = input.next();
@@ -376,49 +370,50 @@ public class RegistrationStaff {
                             update.put("Capacity", input.nextLine());
                             break;
                         case "3":
-                            System.out.println("Enter StaffID");
+                            System.out.println("Enter StaffID"); // Validating if StaffID exists in Staff table; following referrential integrity constraint
                             String staffId = input.nextLine();
                             Validation staffVal = new Validation("Staff", "StaffID", staffId);
                             if(staffVal.validatePresence()) {
                                 update.put("StaffID", staffId);
                             } else {
-                                throw new InvalidID("Invalid StaffId, transaction aborted");
+                                throw new InvalidID("Invalid StaffId, transaction aborted");  //Throws a custom excepttion if StaffId is invalid, and aborts the transaction
                             }
                             break;
                         default:
-                            throw new InvalidChoice("Invalid menu option");
+                            throw new InvalidChoice("Invalid menu option");  // Throws a custom exception if user chooses invalid menu option
                     }
                 }
                 String updateQuery = "";
-                for (String key : update.keySet()) {
+                for (String key : update.keySet()) {  // All update key, values are concatenated
                     updateQuery += key + " = '" + update.get(key) + "',";
                 }
                 String temp = Util.createUpdateStatement(updateQuery, id, Constants.updateWardDetails);
                 Connector.createPreparedStatement(temp);
-                Connector.executeUpdatePreparedQuery();
+                Connector.executeUpdatePreparedQuery();   // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
-                Connector.commit();
+                Connector.commit();   // Commits the transaction
             } catch (SQLException e) {
-                Connector.rollback();
+                Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Ward details" + e.getMessage());
                 e.printStackTrace(System.out);
             }
         } else {
             System.out.println("No such ward exists");
         }
-        Connector.setAutoCommit(true);
+        Connector.setAutoCommit(true);    // Auto commit enabled post transaction
     }
 
+    // Allows the registration staff to update ward details of an admitted patient and checkout a patient from the hospital
     private static void updateCheckInDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Patient Id for updation:");
-        String id = input.next();
-        String selectQuery="select * from CheckIn where PatientId = ? and EndDate is NULL";
+        String id = input.next();  // Takes the patient id for which updation is to be performed
+        String selectQuery = "select * from CheckIn where PatientId = ? and EndDate is NULL"; // Validates if the patient has not already been checked out using EndDate
         Connector.createPreparedStatement(selectQuery);
         Connector.setPreparedStatementString(1, id);
         ResultSet resultSet = Connector.executePreparedQuery();
         if(resultSet.next()) {
             try {
-                Connector.setAutoCommit(false);
+                Connector.setAutoCommit(false);   //Auto commit disabled to implement update of all fields in one transaction
                 System.out.println("Choose fields to update (comma separate if multiple fields)");
                 System.out.println("1.WardNo & BedID  2.End Date");
                 String choices = input.next();
@@ -428,13 +423,13 @@ public class RegistrationStaff {
                 for (String c : choice) {
                     switch (c) {
                         case "1":
-                            String oldbedDataQuery="select * from CheckIn where PatientId = ? and EndDate is NULL";
+                            String oldbedDataQuery = "select * from CheckIn where PatientId = ? and EndDate is NULL";
                             Connector.createPreparedStatement(oldbedDataQuery);
                             Connector.setPreparedStatementString(1, id);
                             ResultSet oldrs = Connector.executePreparedQuery();
                             int oldWardNo = 0;
                             String oldBedId = "";
-                            if(oldrs.next()) {
+                            if(oldrs.next()) {  // Stores the existing Bed Id and Ward No of the patient to release the bed in DB
                                 oldWardNo = oldrs.getInt("WardNo");
                                 oldBedId = oldrs.getString("BedId");
                             }
@@ -442,34 +437,34 @@ public class RegistrationStaff {
                             String wardNo = input.nextLine();
                             System.out.println("Enter BedID");
                             String bedId = input.nextLine();
-                            String bedAvailQuery="select * from Bed where WardNo = ? and BedId = ?";
+                            String bedAvailQuery = "select * from Bed where WardNo = ? and BedId = ?";
                             Connector.createPreparedStatement(bedAvailQuery);
                             Connector.setPreparedStatementString(1, wardNo);
                             Connector.setPreparedStatementString(2, bedId);
                             Connector.executeUpdatePreparedQuery();
                             ResultSet rs = Connector.executePreparedQuery();
                             if(rs.next()) {
-                                if(rs.getString("Status").charAt(0) == 'Y') {
+                                if(rs.getString("Status").charAt(0) == 'Y') { // If the requested bed & ward combination exists at the hospital and is available, then it is alloted
                                     update.put("WardNo", wardNo);
                                     update.put("BedID", bedId);
 
-                                    //Release previous bed
+                                    //Releasing existing bed occupied by the patient
                                     Connector.createPreparedStatement(Constants.releaseBed);
                                     Connector.setPreparedStatementInt(1, oldWardNo);
                                     Connector.setPreparedStatementString(2, oldBedId);
                                     Connector.executeUpdatePreparedQuery();
 
-                                    //Assign new bed
+                                    //Reserving new bed and marking it unavailable in DB
                                     Connector.createPreparedStatement(Constants.reserveBed);
                                     Connector.setPreparedStatementInt(1, Integer.parseInt(wardNo));
                                     Connector.setPreparedStatementString(2, bedId.toUpperCase());
                                     Connector.executeUpdatePreparedQuery();
 
                                 } else {
-                                    throw new InvalidID("Bed unavailable, transaction aborted");
+                                    throw new InvalidID("Bed unavailable, transaction aborted"); // Aborts the transaction if the bed is unavailable
                                 }
                             } else {
-                                throw new InvalidID("No such ward & bed exists, transaction aborted");
+                                throw new InvalidID("No such ward & bed exists, transaction aborted"); // Aborts the transaction if the ward & bed doesn't exist
                             }
                             break;
                         case "2":
@@ -477,38 +472,40 @@ public class RegistrationStaff {
                             update.put("EndDate", input.nextLine());
                             break;
                         default:
-                            throw new InvalidChoice("Invalid menu option");
+                            throw new InvalidChoice("Invalid menu option");   // Throws a custom exception if user chooses invalid menu option
                     }
                 }
+                update.put("StaffID", User.id);
                 String updateQuery = "";
-                for (String key : update.keySet()) {
+                for (String key : update.keySet()) {  // All update key, values are concatenated
                     updateQuery += key + " = '" + update.get(key) + "',";
                 }
                 String temp = Util.createUpdateStatement(updateQuery, id, Constants.updateCheckInDetails);
                 Connector.createPreparedStatement(temp);
-                Connector.executeUpdatePreparedQuery();
+                Connector.executeUpdatePreparedQuery();    // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
-                Connector.commit();
+                Connector.commit();   // Commits the transaction
             } catch (SQLException e) {
-                Connector.rollback();
+                Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating details" + e.getMessage());
                 e.printStackTrace(System.out);
             }
         } else {
             System.out.println("Invalid choice");
         }
-        Connector.setAutoCommit(true);
+        Connector.setAutoCommit(true);    // Auto commit enabled post transaction
     }
 
+    // Allows the registration staff to update Billing details of an admitted patient such as Visit Date, Payment Method, Card Number etc.
     private static void updateBRDetails(Scanner input) throws SQLException, InvalidID, InvalidChoice {
         System.out.println("Hi " + User.name + " , Enter Billing Record Id for updation:");
-        String id = input.next();
+        String id = input.next();   // Takes the billing record id for which updation is to be performed
         Validation val = new Validation("BillingRecord", "BillingRecordID", id);
-        if (val.validatePresence()) {
+        if (val.validatePresence()) {   // Validates if the billing record id exists
             try {
-                Connector.setAutoCommit(false);
+                Connector.setAutoCommit(false);   //Auto commit disabled to implement update of all fields in one transaction
                 System.out.println("Choose fields to update (comma separate if multiple fields)");
-                System.out.println("1.Visit Date  2.Payment Method  3.Card Number  4.Fees  5.PayeeSSN  6.BillingAddress  7.StaffID  8.PatientId  9.MedicalRecordId");
+                System.out.println("1.Visit Date  2.Payment Method  3.Card Number  4.Fees  5.PayeeSSN  6.BillingAddress  7.PatientId  8.MedicalRecordId");
                 String choices = input.next();
                 input.nextLine();
                 String[] choice = choices.split(",");
@@ -519,7 +516,7 @@ public class RegistrationStaff {
                             System.out.println("Enter Visit Date (YYYY-MM-DD)");
                             update.put("VisitDate", input.nextLine());
                             break;
-                        case "2":
+                        case "2": // If the user enters card as the payment method, then he is also prompted to enter the card number
                             System.out.println("Enter Payment Method");
                             String paymentMethod = input.nextLine();
                             if(paymentMethod.toLowerCase().equals("card")) {
@@ -545,16 +542,6 @@ public class RegistrationStaff {
                             update.put("BillingAddress", input.nextLine());
                             break;
                         case "7":
-                            System.out.println("Enter Staff ID");
-                            String staffId = input.nextLine();
-                            Validation staffVal = new Validation("Staff", "StaffID", staffId);
-                            if(staffVal.validatePresence()) {
-                                update.put("StaffID", staffId);
-                            } else {
-                                throw new InvalidID("Invalid StaffId, transaction aborted");
-                            }
-                            break;
-                        case "8":
                             System.out.println("Enter Patient ID");
                             String patientId = input.nextLine();
                             Validation patVal = new Validation("Patient", "PatientID", patientId);
@@ -564,7 +551,7 @@ public class RegistrationStaff {
                                 throw new InvalidID("Invalid PatientID, transaction aborted");
                             }
                             break;
-                        case "9":
+                        case "8":
                             System.out.println("Enter Medical Record ID");
                             String MRId = input.nextLine();
                             Validation MRVal = new Validation("MedicalRecord", "MedicalRecordID", MRId);
@@ -578,6 +565,7 @@ public class RegistrationStaff {
                             throw new InvalidChoice("Invalid menu option");
                     }
                 }
+                update.put("StaffID", User.id);
                 String updateQuery = "";
                 for (String key : update.keySet()) {
                     updateQuery += key + " = '" + update.get(key) + "',";
@@ -1181,6 +1169,8 @@ public class RegistrationStaff {
 		Connector.setAutoCommit(true);
 		
 	}
+
+
 	private static void check_in(Scanner input) throws SQLException {
 		try {
 			Connector.setAutoCommit(false);
