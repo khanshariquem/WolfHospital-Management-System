@@ -1218,6 +1218,25 @@ public class RegistrationStaff {
 		Connector.setAutoCommit(true);
 		
 	}
+     static boolean checkBedAvail(int wardNo,String bedid){
+	    try {
+            String bedAvailQuery = "select * from Bed where WardNo = ? and BedId = ?";
+            Connector.createPreparedStatement(bedAvailQuery);
+            Connector.setPreparedStatementInt(1, wardNo);
+            Connector.setPreparedStatementString(2, bedid);
+            Connector.executeUpdatePreparedQuery();
+            ResultSet rs = Connector.executePreparedQuery();
+            if (rs.next()) {
+                if(rs.getString("Status").charAt(0) == 'Y')
+                    return true;
+            }
+        }
+        catch(Exception e){
+            System.out.println("error occurred while check bed status");
+        }
+        return false;
+
+    }
 	private static void check_in(Scanner input) throws SQLException {
 		try {
 			Connector.setAutoCommit(false);
@@ -1242,8 +1261,7 @@ public class RegistrationStaff {
 
 				boolean bedAlloted=false;
 				while(!bedAlloted){
-					//check bed availability
-					if(true){
+					if(checkBedAvail(wardNo,bedid)){
 						Connector.setPreparedStatementInt(1, Integer.valueOf(User.id));
 						Connector.setPreparedStatementInt(2, Integer.valueOf(id));
 						Connector.setPreparedStatementInt(4, wardNo);
