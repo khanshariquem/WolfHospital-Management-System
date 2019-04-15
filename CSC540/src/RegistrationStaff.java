@@ -629,11 +629,15 @@ public class RegistrationStaff {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
+	
+	// method to get the usage details for a given ward
 	private static void getBedUsage() {
 		try {
 			Connector.createStatement();
+			// get available/occupancy details for a given ward
 			ResultSet rs = Connector.executeQuery(Constants.getBedUsage);
 			String leftAlignFormat = "|       %-10s |    %-10s |    %-10s |     %-10s|%n";
+			// display ward no, capacity, total count of available beds and total count of occupied beds 
 			System.out.format("+------------------+---------------+---------------+---------------+%n");
 			System.out.format("| Ward No          |  Capacity     |    Available  |  Occupied     |%n");
 			System.out.format("+------------------+---------------+---------------+---------------+%n");
@@ -737,6 +741,8 @@ public class RegistrationStaff {
 		}
 	}
 	
+	
+	// method to reserve a requested bed in the requested ward 
 	private static void reserveBed(Scanner input) {
 		try {
 			int temp;
@@ -744,17 +750,20 @@ public class RegistrationStaff {
 			temp = input.nextInt();
 			String bedId = null;
 			System.out.println("Enter Bed ID:");
-			bedId = input.next();			
+			bedId = input.next();		
+			// validate ward id
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
             if(rs.next()) {
+            	// reserve bed
             	Connector.createPreparedStatement(Constants.reserveBed);
             	Connector.setPreparedStatementInt(1, temp);
     			Connector.setPreparedStatementString(2, bedId.toUpperCase());
                 if(Connector.executeUpdatePreparedQuery() == 1)
                 	System.out.println("Bed reserved Successfully");
                 else {
+                	// fails if bed id is invalid
                 	System.out.println("Error occured, invalid Bed Id! try again");
                 }
             } else {
@@ -766,46 +775,63 @@ public class RegistrationStaff {
 		}	
 	}
 	
+	// method to create billing record
+	// performed in transaction - medical record is created internally
 	private static void createBillingRecord(Scanner input) throws SQLException {
+		// check if they want to admit the patient
 		System.out.println("Do you want to admit the patient(Y/N)?:");
 		String admit = input.next();
 		boolean bedAvailable = true;
+		// if patient needs to be admitted
 		if(admit.equalsIgnoreCase("Y")) {
 			float result = returnWardUsagePercentage();
 			if(result < 0.0) {
+				// if it fails during DB operation
 				throw new SQLException();
 			} else if (result < 100.0){
+				// if beds are available
 				bedAvailable = true;
 			} else 
+				// if no beds are available
 				bedAvailable = false;
 		} 
+		// if no beds are available, return saying no beds available
 		if(!bedAvailable) {
 			System.out.println("No empty bed available to check in the patient");
+		// else create billing record and medical record
 		} else {
 			try {
+				// read patient id
 				System.out.println("Enter Patient ID:");
 				int patientId = input.nextInt();
+				// read responsible doctor id
 				System.out.println("Enter the Id of the Responsible Doctor for this treatment:");
 				int docId = input.nextInt();
-				
+				// validate patient id
 				Connector.createPreparedStatement(Constants.validatePatient);
 				Connector.setPreparedStatementInt(1, patientId);
 	            ResultSet patRes =  Connector.executePreparedQuery();
+	            // validate doctor id
 	            Connector.createPreparedStatement(Constants.validateDoctor);
 				Connector.setPreparedStatementInt(1, docId);
 	            ResultSet docRes =  Connector.executePreparedQuery();
+	            // if both patient id and doctor id are valid
 	            if(patRes.next() && docRes.next()) {
+	            	// set auto commit to false
 	            	Connector.setAutoCommit(false);
+	            	// create medical record
 	     			Connector.createPreparedStatement(Constants.createMedicalRecord);
 	     			Connector.setPreparedStatementInt(1, docId);
 	     			Connector.setPreparedStatementInt(2, patientId);
 	     			Connector.executeUpdatePreparedQuery();
 	     			ResultSet rs = Connector.getGeneratedKeys();
 	     			int medId = 0;
+	     			// if medical record creation is successful
 	     			if(rs.next())
 	     				medId = rs.getInt(1);
 	     			else
 	     				throw new SQLException();
+	     			// create billing record
 	     			Connector.createPreparedStatement(Constants.createBillingRecord);
 	     			Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
 	     			Connector.setPreparedStatementInt(2, patientId);
@@ -814,6 +840,7 @@ public class RegistrationStaff {
 	     			String paymentMethod = input.next();
 	     			Connector.setPreparedStatementString(4, paymentMethod);
 	     			if(!paymentMethod.equalsIgnoreCase("cash")) {
+	     				// read card details and billing address if payment method is not cash
 	     				System.out.println("Enter card/insurance details:");
 	     				String temp = input.next();
 	     				Connector.setPreparedStatementString(5, temp);
@@ -828,6 +855,7 @@ public class RegistrationStaff {
 	     			System.out.println("Enter Fees:");
 	     			float fees = input.nextFloat();
 	     			Connector.setPreparedStatementFloat(6, fees);
+	     			// check if payeeSSN is to be added
 	     			System.out.println("Do you want to enter PayeeSSN(optional)? (Y/N):");
 	     			String temp = input.next();
 	     			if(temp.equals("Y")) {
@@ -838,15 +866,19 @@ public class RegistrationStaff {
 	     				Connector.setPreparedStatementString(7, null);
 	     			}		
 	     			Connector.executeUpdatePreparedQuery();
+	     			// commit everything finally
 	     			Connector.commit();
+	     			// set auto commit to true
 	     			Connector.setAutoCommit(true);
 	     			System.out.println("Billing record created successfully");
 	     			
 	     		} else {
+	     			// return with a message when patient id or responsible doctor id are valid
 	                System.out.println("Given patient ID or Responsible doctor ID doesn't exist, try again!");
 	            }  
 			}
 	        catch(SQLException e) {
+	        	// handle exceptions - perform rollback and set auto commit to true
 	 			Connector.rollback();
 	 			Connector.setAutoCommit(true);
 	 			System.out.println("Error occured while creating entries, please check your input data " + e.getMessage());
@@ -908,24 +940,30 @@ public class RegistrationStaff {
 		
 	}
 	
+	// method to release a requested bed in the requested ward 
 	private static void releaseBed(Scanner input) {
 		try {
 			int temp;
+			// read ward id
 			System.out.println("Enter Ward ID:");
 			temp = input.nextInt();
 			String bedId = null;
+			// read bed id
 			System.out.println("Enter Bed ID:");
 			bedId = input.next();			
+			// valdiate ward id
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
             if(rs.next()) {
+            	// release bed
             	Connector.createPreparedStatement(Constants.releaseBed);
             	Connector.setPreparedStatementInt(1, temp);
     			Connector.setPreparedStatementString(2, bedId.toUpperCase());
                 if(Connector.executeUpdatePreparedQuery() == 1)
                 	System.out.println("Bed released Successfully");
                 else {
+                	// failed due to invalid bed id
                 	System.out.println("Error occured, invalid Bed Id! try again");
                 }
             } else {
@@ -937,6 +975,7 @@ public class RegistrationStaff {
 		}	
 	}
 	
+	//method to delete a staff
 	private static void deleteStaff(Scanner input) {
 		try {
 			int temp;
@@ -946,10 +985,12 @@ public class RegistrationStaff {
 				System.out.println("You cannot delete your own account, try again");
 				RegistrationStaff.menu(input);
 			}
+			// check if the passed staff id exists
 			Connector.createPreparedStatement(Constants.checkStaff);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
             if(rs.next()) {
+            	// delete if the id exists
             	Connector.createPreparedStatement(Constants.deleteStaff);
                 Connector.setPreparedStatementInt(1, temp);
                 if(Connector.executeUpdatePreparedQuery() == 1)
@@ -966,16 +1007,18 @@ public class RegistrationStaff {
 		}	
 	}
 	
+	// method to delete a patient
 	private static void deletePatient(Scanner input) {
 		try {
 			int temp;
 			System.out.println("Enter Patient ID:");
 			temp = input.nextInt();
-			
+			// check if the passed patient id exists
 			Connector.createPreparedStatement(Constants.validatePatient);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
             if(rs.next()) {
+            	// delete if the id exists
             	Connector.createPreparedStatement(Constants.deletePatient);
                 Connector.setPreparedStatementInt(1, temp);
                 if(Connector.executeUpdatePreparedQuery() == 1)
@@ -991,40 +1034,50 @@ public class RegistrationStaff {
 		}	
 	}
 	
-	
+	// method to delete a ward
+	// handled in transaction - ward and all its beds are deleted
 	private static void deleteWard(Scanner input) {
 		try {
 			int temp;
 			System.out.println("Enter Ward Number:");
 			temp = input.nextInt();
-			
+			// validate ward id
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
             if(rs.next()) {
+            	// make sure no beds of this ward are assigned to any patient
             	Connector.createPreparedStatement(Constants.checkBeds);
     			Connector.setPreparedStatementInt(1, temp);
                 ResultSet res =  Connector.executePreparedQuery();
                 if(!res.next()) {
                 	try {
+                		// set auto commit to false - to handle transaction
                 		Connector.setAutoCommit(false);
+                		// delete beds
                     	Connector.createPreparedStatement(Constants.deleteBeds);
                     	Connector.setPreparedStatementInt(1, temp);
                     	if(Connector.executeUpdatePreparedQuery() == 0)
                     		throw new SQLException();
+                    	// delete ward
                     	Connector.createPreparedStatement(Constants.deleteWard);
                     	Connector.setPreparedStatementInt(1, temp);
                     	if(Connector.executeUpdatePreparedQuery() != 1)
                     		throw new SQLException();
+                    	// commit everything at once finally
                     	Connector.commit();
+                    	// set auto commit to true
                     	Connector.setAutoCommit(true);
                     	System.out.println("Ward deleted successfully");
                 	} catch(SQLException e){
+                		// handle exception
+                		// rollback  everything and set auto commit to true
                 		Connector.rollback();
                 		Connector.setAutoCommit(true);
                 		System.out.println("Error occured while deleting the ward, try again ");
                 	}
                 } else {
+                	// do not delete ward
                 	System.out.println("One or more beds of this ward are already assigned to patients, ward delete not allowed!");
                 }
             } else {
@@ -1315,7 +1368,7 @@ public class RegistrationStaff {
 		}
 	}
 	
-	
+	// method to return the total count of patients on a given year and month
 	public static void getPatientCount(Scanner input) throws SQLException{
 		try {
 			Connector.createPreparedStatement(Constants.getPatientCount);
@@ -1326,6 +1379,7 @@ public class RegistrationStaff {
 			stMonth=input.next();
 			Connector.setPreparedStatementString(2, stMonth);
 			ResultSet rs = Connector.executePreparedQuery();
+			// print result with year, month and count attributes
 			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |%n";
 			System.out.format("+------------------+-------------+-------------+%n");
 			System.out.format("| Year             |  Month      |    Count    |%n");
