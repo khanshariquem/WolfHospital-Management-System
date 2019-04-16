@@ -831,7 +831,7 @@ public class RegistrationStaff {
 	private static void reserveBed(Scanner input) {
 		try {
 			int temp;
-			System.out.println("Enter Ward ID:");
+			System.out.println("Enter Ward No:");
 			temp = input.nextInt();
 			String bedId = null;
 			System.out.println("Enter Bed ID:");
@@ -840,7 +840,7 @@ public class RegistrationStaff {
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
-         // validate bed id
+            // validate bed id
             Connector.createPreparedStatement(Constants.validateBed);
         	Connector.setPreparedStatementInt(1, temp);
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
@@ -851,6 +851,7 @@ public class RegistrationStaff {
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
 			ResultSet result =  Connector.executePreparedQuery();
 			if(result.next()) {
+				// if both bed id and ward no are valid
 				if(rs.next() && res.next()) {
 	            	// reserve bed
 	            	Connector.createPreparedStatement(Constants.reserveBed);
@@ -871,7 +872,7 @@ public class RegistrationStaff {
 			} 
 		}
 		catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
+			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
 	
