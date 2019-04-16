@@ -840,20 +840,33 @@ public class RegistrationStaff {
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
-            if(rs.next()) {
-            	// reserve bed
-            	Connector.createPreparedStatement(Constants.reserveBed);
-            	Connector.setPreparedStatementInt(1, temp);
-    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-                if(Connector.executeUpdatePreparedQuery() == 1)
-                	System.out.println("Bed reserved Successfully");
-                else {
-                	// fails if bed id is invalid
-                	System.out.println("Error occured, invalid Bed Id! try again");
-                }
-            } else {
-                System.out.println("Given ward doesn't exist");
-            }	  
+            Connector.createPreparedStatement(Constants.validateBed);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet res =  Connector.executePreparedQuery();
+			Connector.createPreparedStatement(Constants.validateBedAvailability);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet result =  Connector.executePreparedQuery();
+			if(result.next()) {
+				if(rs.next() && res.next()) {
+	            	// reserve bed
+	            	Connector.createPreparedStatement(Constants.reserveBed);
+	            	Connector.setPreparedStatementInt(1, temp);
+	    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+	    			
+	                if(Connector.executeUpdatePreparedQuery() == 1)
+	                	System.out.println("Bed reserved Successfully");
+	                else {
+	                	// fails if bed id is invalid
+	                	System.out.println("Error occured! try again");
+	                }
+	            } else {
+	                System.out.println("Given ward/Bed doesn't exist");
+	            }	 
+			} else {
+				System.out.println("Couldn't reserve bed! This bed already taken");
+			} 
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured, try again"+e.getMessage());

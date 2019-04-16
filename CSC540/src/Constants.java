@@ -11,6 +11,8 @@ public final class Constants {
 	public static final String checkStaff = "select * from Staff where StaffId = ?";
 	public static final String validatePatient = "select * from Patient where PatientID = ?";
 	public static final String validateWard = "select * from Ward where WardNo = ?";
+	public static final String validateBed = "select * from Bed where WardNo = ? and BedId = ?";
+	public static final String validateBedAvailability = "select * from Bed where WardNo = ? and BedId = ? and Status = 'Y";
 	public static final String checkBeds = "select * from Bed where WardNo = ? and Status = 'N'";
 	public static final String validateDoctor = "select * from Staff where StaffID = ? and JobTitle = 'Doctor'";
 	public static final String validateRegistrationStaff = "select * from Staff where StaffID = ? and JobTitle <> 'Doctor' and JobTitle <> 'Nurse' ";
