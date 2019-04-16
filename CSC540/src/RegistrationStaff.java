@@ -865,7 +865,7 @@ public class RegistrationStaff {
 	                System.out.println("Given ward/Bed doesn't exist");
 	            }	 
 			} else {
-				System.out.println("Couldn't reserve bed! This bed already taken");
+				System.out.println("Couldn't reserve bed! This bed is already taken");
 			} 
 		}
 		catch(SQLException e) {
@@ -1054,6 +1054,7 @@ public class RegistrationStaff {
 	 *  method to release a requested bed in the requested ward 
 	 * @param input
 	 */
+	
 	private static void releaseBed(Scanner input) {
 		try {
 			int temp;
@@ -1068,20 +1069,33 @@ public class RegistrationStaff {
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
-            if(rs.next()) {
-            	// release bed
-            	Connector.createPreparedStatement(Constants.releaseBed);
-            	Connector.setPreparedStatementInt(1, temp);
-    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-                if(Connector.executeUpdatePreparedQuery() == 1)
-                	System.out.println("Bed released Successfully");
-                else {
-                	// failed due to invalid bed id
-                	System.out.println("Error occured, invalid Bed Id! try again");
-                }
-            } else {
-                System.out.println("Given ward doesn't exist");
-            }	  
+            Connector.createPreparedStatement(Constants.validateBed);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet res =  Connector.executePreparedQuery();
+			Connector.createPreparedStatement(Constants.validateBedAvail);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet result =  Connector.executePreparedQuery();
+			if(result.next()) {
+				System.out.println("You cannot release this bed, it is already to a patient!");
+			} else {
+				if(rs.next() && res.next()) {
+	            	// release bed
+	            	Connector.createPreparedStatement(Constants.releaseBed);
+	            	Connector.setPreparedStatementInt(1, temp);
+	    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+	                if(Connector.executeUpdatePreparedQuery() == 1)
+	                	System.out.println("Bed released Successfully");
+	                else {
+	                	// failed due to invalid bed id
+	                	System.out.println("Error occured, invalid Bed Id! try again");
+	                }
+	            } else {
+	                System.out.println("Given ward/bed doesn't exist");
+	            }	
+			}
+              
 		}
 		catch(SQLException e) {
 			System.out.println("Error occured, try again "+e.getMessage());
