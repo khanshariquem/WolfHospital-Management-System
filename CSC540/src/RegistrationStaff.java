@@ -840,10 +840,12 @@ public class RegistrationStaff {
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
+         // validate bed id
             Connector.createPreparedStatement(Constants.validateBed);
         	Connector.setPreparedStatementInt(1, temp);
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
 			ResultSet res =  Connector.executePreparedQuery();
+			// validate that the availability status of this bed is 'Y'
 			Connector.createPreparedStatement(Constants.validateBedAvailability);
         	Connector.setPreparedStatementInt(1, temp);
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
@@ -1065,14 +1067,16 @@ public class RegistrationStaff {
 			// read bed id
 			System.out.println("Enter Bed ID:");
 			bedId = input.next();			
-			// valdiate ward id
+			// validate ward id
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
+         // validate bed number
             Connector.createPreparedStatement(Constants.validateBed);
         	Connector.setPreparedStatementInt(1, temp);
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
 			ResultSet res =  Connector.executePreparedQuery();
+			// validate if this bed's status is 'Y" and there is no patient assigned to it currently
 			Connector.createPreparedStatement(Constants.validateBedAvail);
         	Connector.setPreparedStatementInt(1, temp);
 			Connector.setPreparedStatementString(2, bedId.toUpperCase());
