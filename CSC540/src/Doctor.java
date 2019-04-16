@@ -220,24 +220,26 @@ public class Doctor {
 	 */
 	public static void createTest(Scanner input,String id){
 		try {
-			Connector.createPreparedStatement(Constants.createTest);
 			String temp = null;
+			System.out.println("Enter responsible staff id:");
+			temp = input.nextLine();
+			if(!(RegistrationStaff.validateNurse(Integer.parseInt(temp)) || RegistrationStaff.validateDoctor(Integer.parseInt(temp)))) {
+				throw new RegistrationStaff.InvalidID("Invalid Staff ID");
+			}
+			Connector.createPreparedStatement(Constants.createTest);
+			Connector.setPreparedStatementString(3, temp);
 			System.out.println("Enter Test Name:");
 			temp = input.nextLine();
 			Connector.setPreparedStatementString(1, temp);
 			System.out.println("Enter Test Lab:");
 			temp = input.nextLine();
 			Connector.setPreparedStatementString(2, temp);
-			System.out.println("Enter responsible staff id:");
-			temp = input.nextLine();
-
-			Connector.setPreparedStatementString(3, temp);
 			Connector.setPreparedStatementString(4, id);
 			Connector.executeUpdatePreparedQuery();
 			System.out.println("Test Added Successfully");
 		}
-		catch(SQLException e) {
-			System.out.println("Error occured while adding Test data"+e.getMessage());
+		catch(Exception e) {
+			System.out.println("Error occurred while adding Test data"+e.getMessage());
 		}
 	}
 	
@@ -329,7 +331,12 @@ public class Doctor {
 							break;
 						case "5":
 							System.out.println("Enter Test Staff");
-							update.put("StaffID", input.nextLine());
+							String temp = input.nextLine();
+							if(RegistrationStaff.validateNurse(Integer.parseInt(temp)) || RegistrationStaff.validateDoctor(Integer.parseInt(temp))) {
+								update.put("StaffID", temp);
+							} else {
+								throw new RegistrationStaff.InvalidID("Invalid Staff ID");
+							}
 							break;
 						default:
 							break;
@@ -347,7 +354,7 @@ public class Doctor {
 			else{
 				System.out.println("Test ID for the given Medical Record ID doesnt exist ");
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Error occured while adding Test data" + e.getMessage());
 		}
 	}
@@ -363,8 +370,9 @@ public class Doctor {
 			System.out.println("Choose fields to update( comma separate if multiple fields)");
 			System.out.println("1.Start Date");
 			System.out.println("2.End Date");
-			System.out.println("3.Staff ID");
-			String choices = input.nextLine();
+			System.out.println("3.Responsible Doctor Id");
+			String choices = input.next();
+			input.nextLine();
 			String[] choice = choices.split(",");
 			HashMap<String, String> update = new HashMap<String, String>();
 			for (String c : choice) {
@@ -379,8 +387,13 @@ public class Doctor {
 						break;
 
 					case "3":
-						System.out.println("Enter Staff ID");
-						update.put("StaffID", input.nextLine());
+						System.out.println("Enter Responsible Doctor Id");
+						String temp = input.nextLine();
+						if(RegistrationStaff.validateDoctor(Integer.parseInt(temp))) {
+							update.put("StaffID", temp);
+						} else {
+							throw new RegistrationStaff.InvalidID("Invalid Staff ID");
+						}
 						break;
 					default:
 						break;
@@ -395,7 +408,7 @@ public class Doctor {
 			Connector.createPreparedStatement(temp);
 			Connector.executeUpdatePreparedQuery();
 			System.out.println("Medical Record Updated Successfully");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Error occured while adding Medical Record  data" + e.getMessage());
 		}
 	}

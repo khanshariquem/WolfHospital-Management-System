@@ -33,7 +33,7 @@ public class RegistrationStaff {
 			System.out.println("13. Assign a bed to patient");
 			System.out.println("14. Reserve a bed for patient");
 			System.out.println("15. Release a bed");
-			System.out.println("16. Create Billing Record");
+			System.out.println("16. Create Billing & Medical Record");
 			System.out.println("17. Get ward Usage percentage");
 			System.out.println("18. Get current patients for doctor ");
 			System.out.println("19. Get all staff information grouped by role");
@@ -132,8 +132,8 @@ public class RegistrationStaff {
 				break;
 			case 13:
 				try {
-					assignBed(input);
-				} catch (SQLException e) {
+					check_in(input);
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 				break;
@@ -334,11 +334,11 @@ public class RegistrationStaff {
                             update.put("SSN", input.nextLine());
                             break;
                         case "7":
-                            System.out.println("Enter Processing_Treatment_Plan");
+                            System.out.println("Enter Processing Treatment Plan");
                             update.put("Processing_Treatment_Plan", input.nextLine());
                             break;
                         case "8":
-                            System.out.println("Enter Completing_Treatment (Yes/No)");
+                            System.out.println("Enter Completing Treatment (Yes/No)");
                             update.put("Completing_Treatment", input.nextLine());
                             break;
                         default:
@@ -382,7 +382,7 @@ public class RegistrationStaff {
             try {
                 Connector.setAutoCommit(false);  //Auto commit disabled to implement update of all fields in one transaction
                 System.out.println("Choose fields to update (comma separate if multiple fields)");
-                System.out.println("1.Charges  2.Capacity  3.StaffID");
+                System.out.println("1.Charges  2.Responsible Nurse ID");
                 String choices = input.next();
                 input.nextLine();
                 String[] choice = choices.split(",");
@@ -394,17 +394,12 @@ public class RegistrationStaff {
                             update.put("Charges", input.nextLine());
                             break;
                         case "2":
-                            System.out.println("Enter Capacity");
-                            update.put("Capacity", input.nextLine());
-                            break;
-                        case "3":
-                            System.out.println("Enter StaffID"); // Validating if StaffID exists in Staff table; following referrential integrity constraint
+                            System.out.println("Enter Responsible Nurse ID"); // Validating if StaffID exists in Staff table; following referrential integrity constraint
                             String staffId = input.nextLine();
-                            Validation staffVal = new Validation("Staff", "StaffID", staffId);
-                            if(staffVal.validatePresence()) {
+                            if(validateNurse(Integer.parseInt(staffId))) {
                                 update.put("StaffID", staffId);
                             } else {
-                                throw new InvalidID("Invalid StaffId, transaction aborted");  //Throws a custom excepttion if StaffId is invalid, and aborts the transaction
+                                throw new InvalidID("Invalid NurseID, transaction aborted");  //Throws a custom excepttion if StaffId is invalid, and aborts the transaction
                             }
                             break;
                         default:
@@ -638,10 +633,10 @@ public class RegistrationStaff {
 			Connector.createStatement();
 			ResultSet rs = Connector.executeQuery(Constants.getAllStaff);
 			
-			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-4s|      %-40s |      %-12s |      %-8s |      %-18s |          %-15s          |  %-18s                |%n";
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
-			System.out.format("| Staff ID  |  Name   |    DOB  |   Age   |   Address |    Phone   |    Gender  |       Professional Title    |   Job Title    |     Department       |%n");
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			String leftAlignFormat = "|       %-10s |    %-10s |    %-8s |     %-8s|      %-30s |      %-12s |      %-12s |      %-18s |          %-12s          |  %-12s                |%n";
+			System.out.format("+------------------+---------------+---------------+-------------+----------------------------+-------------------+-------------------------+-------------------------+----------------------+-----------------------+%n");
+			System.out.format("|    Staff ID      |  Name         |    DOB        |   Age       |            Address         |    Phone          |    Gender               |   Professional Title    |   Job Title          |     Department        |%n");
+			System.out.format("+------------------+---------------+---------------+-------------+----------------------------+-------------------+-------------------------+-------------------------+----------------------+-----------------------+%n");
 
 			while(rs.next()) {
 				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(4),Util.getAge(rs.getDate(4)),rs.getString(3),rs.getString(6),Util.getGender(rs.getString(7)),rs.getString(5),rs.getString(8),rs.getString(9));
@@ -673,10 +668,10 @@ public class RegistrationStaff {
 			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
 			Connector.setPreparedStatementInt(1, doctorID);
 			ResultSet rs = Connector.executePreparedQuery();
-			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-4s|      %-40s |      %-12s |      %-8s |      %-18s |          %-5s          |  %-8s                |%n";
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
-			System.out.format("| Patient ID  |  Name   |    DOB  |   Age   |   Address |    Phone   |    Gender  |       SSN  |Processing Treatment Plan| Completing Treatment |%n");
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			String leftAlignFormat = "|       %-10s |    %-12s |    %-8s |     %-8s|      %-28s |      %-12s |      %-8s |      %-18s |          %-5s          |  %-8s                |%n";
+			System.out.format("+------------------+------------------+---------------+-------------+-------------------------------+-------------------+-----------------+-------------------------+-------------------------+----------------------+%n");
+			System.out.format("| Patient ID       |  Name            |    DOB        |   Age       |            Address            |    Phone          |    Gender       |       SSN               |Processing Treatment Plan| Completing Treatment |%n");
+			System.out.format("+------------------+------------------+---------------+-------------+-------------------------------+-------------------+-----------------+-------------------------+-------------------------+----------------------+%n");
 
 			while(rs.next()) {
 				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(3),Util.getAge(rs.getDate(3)),rs.getString(4),rs.getString(5),Util.getGender(rs.getString(6)),rs.getString(7),rs.getString(8),rs.getString(9));
@@ -782,7 +777,7 @@ public class RegistrationStaff {
 		try {
 			Connector.createPreparedStatement(Constants.checkBedAvailabilityBasedOnBedType);
 			int temp;
-			System.out.println("Enter Ward type:1-Bed (1) /2-Bed (2) /3-Bed (3)");
+			System.out.println("Enter Ward type:1-Bed (1) /2-Bed (2) /4-Bed (4)");
 			temp = input.nextInt();
 			Connector.setPreparedStatementInt(1, temp);
 			ResultSet rs = Connector.executePreparedQuery();
@@ -831,6 +826,7 @@ public class RegistrationStaff {
 	private static void reserveBed(Scanner input) {
 		try {
 			int temp;
+            displayBedAvail();
 			System.out.println("Enter Ward ID:");
 			temp = input.nextInt();
 			String bedId = null;
@@ -982,59 +978,59 @@ public class RegistrationStaff {
 	 * @param input
 	 * @throws SQLException
 	 */
-	private static void assignBed(Scanner input) throws SQLException{
-		try {
-			Connector.setAutoCommit(false);
-			Connector.createPreparedStatement(Constants.reserveBed);
-			int wardId;
-			System.out.println("Enter Ward ID:");
-			wardId = input.nextInt();
-			Connector.setPreparedStatementInt(1, wardId);
-			String bedId = null;
-			System.out.println("Enter Bed ID:");
-			bedId = input.next();
-			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-			System.out.println("Enter Patient ID:");
-			int patientId;
-			patientId = input.nextInt();
-			Date startDate = null;
-			Date endDate = null;
-			String temp = null;
-			try {
-				System.out.println("Enter Start Date(yyyy-mm-dd):");
-				temp = input.next();
-				startDate = Date.valueOf(temp);
-				System.out.println("Enter End Date(yyyy-mm-dd):");
-				temp = input.next();
-				endDate = Date.valueOf(temp);
-			} catch (Exception e) {
-				System.out.println("Invalid date, Try agian"+e.getMessage());
-				return ;
-			}
-			
-			if(Connector.executeUpdatePreparedQuery() == 1) {
-				Connector.createPreparedStatement(Constants.assignBed);
-				Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-				Connector.setPreparedStatementInt(2, patientId);
-				Connector.setPreparedStatementDate(3, startDate);
-				Connector.setPreparedStatementInt(4, wardId);
-				Connector.setPreparedStatementString(5, bedId);
-				Connector.setPreparedStatementDate(6, endDate);
-				Connector.executeUpdatePreparedQuery();
-				Connector.commit();
-			}				
-	        else {
-	        	throw new SQLException();
-	        }	
-			System.out.println("Bed assigned Successfully");
-			
-		} catch(SQLException e) {
-			Connector.rollback();
-			System.out.println("Error occured while processing the data" + e.getMessage());
-		}
-		Connector.setAutoCommit(true);
-		
-	}
+//	private static void assignBed(Scanner input) throws SQLException{
+//		try {
+//			Connector.setAutoCommit(false);
+//			Connector.createPreparedStatement(Constants.reserveBed);
+//			int wardId;
+//			System.out.println("Enter Ward ID:");
+//			wardId = input.nextInt();
+//			Connector.setPreparedStatementInt(1, wardId);
+//			String bedId = null;
+//			System.out.println("Enter Bed ID:");
+//			bedId = input.next();
+//			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+//			System.out.println("Enter Patient ID:");
+//			int patientId;
+//			patientId = input.nextInt();
+//			Date startDate = null;
+//			Date endDate = null;
+//			String temp = null;
+//			try {
+//				System.out.println("Enter Start Date(yyyy-mm-dd):");
+//				temp = input.next();
+//				startDate = Date.valueOf(temp);
+//				System.out.println("Enter End Date(yyyy-mm-dd):");
+//				temp = input.next();
+//				endDate = Date.valueOf(temp);
+//			} catch (Exception e) {
+//				System.out.println("Invalid date, Try agian"+e.getMessage());
+//				return ;
+//			}
+//
+//			if(Connector.executeUpdatePreparedQuery() == 1) {
+//				Connector.createPreparedStatement(Constants.assignBed);
+//				Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
+//				Connector.setPreparedStatementInt(2, patientId);
+//				Connector.setPreparedStatementDate(3, startDate);
+//				Connector.setPreparedStatementInt(4, wardId);
+//				Connector.setPreparedStatementString(5, bedId);
+//				Connector.setPreparedStatementDate(6, endDate);
+//				Connector.executeUpdatePreparedQuery();
+//				Connector.commit();
+//			}
+//	        else {
+//	        	throw new SQLException();
+//	        }
+//			System.out.println("Bed assigned Successfully");
+//
+//		} catch(SQLException e) {
+//			Connector.rollback();
+//			System.out.println("Error occured while processing the data" + e.getMessage());
+//		}
+//		Connector.setAutoCommit(true);
+//
+//	}
 	
 	
 	/**
@@ -1339,6 +1335,27 @@ public class RegistrationStaff {
 		}
 		return res;
 	}
+
+    /**
+     * Method will validate if a doctor is present in the database
+     * @param id
+     * @return
+     */
+    public static boolean validateDoctor(int id) {
+        boolean res = false;
+        try {
+            Connector.createPreparedStatement(Constants.validateDoctor);
+            Connector.setPreparedStatementInt(1, id);
+            ResultSet result = Connector.executePreparedQuery();
+            if(result.next()) {
+                res = true;
+            }
+        }
+        catch(SQLException e) {
+            System.out.println("Error occured, try again"+e.getMessage());
+        }
+        return res;
+    }
 	
 	/**
 	 * This method will create a new Ward based on user inputs
