@@ -25,10 +25,8 @@ public class Patient {
 			case 1:
 			    try{
                     updatePatientDetails(input);
-                } catch (SQLException ex) {
+                } catch (Exception ex) {
                     System.out.println(ex.getMessage());
-                } catch (RegistrationStaff.InvalidChoice e) {
-                    System.out.println(e.getMessage());
                 }
 				break;
 			case 2:
@@ -104,7 +102,7 @@ public class Patient {
             Connector.executeUpdatePreparedQuery();    // Executes update of all user selected fields
             System.out.println("Details updated Successfully");
             Connector.commit();    // Commits the transaction
-        } catch (SQLException e) {
+        } catch (Exception e) {
             Connector.rollback();    //In case of error, the transaction is rollbacked
             System.out.println("Error occured while updating your details" + e.getMessage());
             //e.printStackTrace(System.out);
@@ -147,7 +145,7 @@ public class Patient {
                 System.out.format(leftAlignFormat,rs.getString(2),rs.getString(3),rs.getString(6),rs.getString( 7),rs.getString(8),rs.getString(9));
             }
             System.out.println();
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("Error occured, try again"+e.getMessage());
         }
     }
@@ -170,7 +168,7 @@ public class Patient {
                 System.out.format(leftAlignFormat,rs.getString(2),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10));
             }
             System.out.println();
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("Error occured, try again"+e.getMessage());
         }
     }

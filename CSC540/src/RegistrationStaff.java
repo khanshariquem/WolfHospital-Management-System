@@ -34,7 +34,7 @@ public class RegistrationStaff {
 			System.out.println("14. Reserve a bed for patient");
 			System.out.println("15. Release a bed");
 			System.out.println("16. Create Billing & Medical Record");
-			System.out.println("17. Get ward Usage percentage");
+			System.out.println("17. Get Ward Usage Percentage");
 			System.out.println("18. Get current patients for doctor ");
 			System.out.println("19. Get all staff information grouped by role");
             System.out.println("20. Get Patient Medical Record by MM/YYY");
@@ -58,7 +58,7 @@ public class RegistrationStaff {
 				try {
 
                     createNewWard(input);
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 				break;
@@ -68,53 +68,35 @@ public class RegistrationStaff {
 			case 4:
                 try {
                     updateStaffDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
 				break;
 			case 5:
                 try {
                     updateWardDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
 				break;
 			case 6:
                 try {
                     updatePatientDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
 				break;
             case 7:
                 try {
                     updateCheckInDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
             case 8:
                 try {
                     updateBRDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
@@ -146,7 +128,7 @@ public class RegistrationStaff {
 			case 16:
 				try {
 					createBillingRecord(input);
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println("Error occured while checking the bed availability, try again");
 				}
 				break;
@@ -162,14 +144,14 @@ public class RegistrationStaff {
 			case 20:
                 try {
                     getMedicalRecordForPatient(input);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
             case 21:
                 try {
                     getMedicalRecordForPatientBetween(input);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
@@ -190,7 +172,7 @@ public class RegistrationStaff {
 			case 25:
 				try {
 					getPatientCount(input);
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 				break;
@@ -275,7 +257,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();     // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
                 Connector.commit();   // Commits the transaction
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Staff details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -355,7 +337,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();  // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
                 Connector.commit();  // Commits the transaction
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();  //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Patient details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -415,7 +397,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();   // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
                 Connector.commit();   // Commits the transaction
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Ward details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -515,7 +497,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();    // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
                 Connector.commit();   // Commits the transaction
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -612,7 +594,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();
                 System.out.println("Details updated Successfully");
                 Connector.commit();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();
                 System.out.println("Error occured while updating details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -643,7 +625,7 @@ public class RegistrationStaff {
 
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -678,7 +660,7 @@ public class RegistrationStaff {
 
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -703,7 +685,7 @@ public class RegistrationStaff {
 
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -722,7 +704,7 @@ public class RegistrationStaff {
 				System.out.println("Error occured. Try again.");
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -742,7 +724,7 @@ public class RegistrationStaff {
 				return (float) -1.0;
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 			return (float) -1.0;
 		}
@@ -788,7 +770,7 @@ public class RegistrationStaff {
 				System.out.println("Error occured. Try again.");
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -812,7 +794,7 @@ public class RegistrationStaff {
 				System.out.println("Error occured. Try again.");
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -867,7 +849,7 @@ public class RegistrationStaff {
 				System.out.println("Couldn't reserve bed! This bed is already taken");
 			} 
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -980,7 +962,7 @@ public class RegistrationStaff {
 	                System.out.println("Given patient ID or Responsible doctor ID doesn't exist, try again!");
 	            }  
 			}
-	        catch(SQLException e) {
+	        catch(Exception e) {
 	        	// handle exceptions - perform rollback and set auto commit to true
 	 			Connector.rollback();
 	 			Connector.setAutoCommit(true);
@@ -988,67 +970,7 @@ public class RegistrationStaff {
 	 		}
 		}
 	}
-	
-	/**
-	 * Method to assign a bed to a patient
-	 * @param input
-	 * @throws SQLException
-	 */
-//	private static void assignBed(Scanner input) throws SQLException{
-//		try {
-//			Connector.setAutoCommit(false);
-//			Connector.createPreparedStatement(Constants.reserveBed);
-//			int wardId;
-//			System.out.println("Enter Ward ID:");
-//			wardId = input.nextInt();
-//			Connector.setPreparedStatementInt(1, wardId);
-//			String bedId = null;
-//			System.out.println("Enter Bed ID:");
-//			bedId = input.next();
-//			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-//			System.out.println("Enter Patient ID:");
-//			int patientId;
-//			patientId = input.nextInt();
-//			Date startDate = null;
-//			Date endDate = null;
-//			String temp = null;
-//			try {
-//				System.out.println("Enter Start Date(yyyy-mm-dd):");
-//				temp = input.next();
-//				startDate = Date.valueOf(temp);
-//				System.out.println("Enter End Date(yyyy-mm-dd):");
-//				temp = input.next();
-//				endDate = Date.valueOf(temp);
-//			} catch (Exception e) {
-//				System.out.println("Invalid date, Try agian"+e.getMessage());
-//				return ;
-//			}
-//
-//			if(Connector.executeUpdatePreparedQuery() == 1) {
-//				Connector.createPreparedStatement(Constants.assignBed);
-//				Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-//				Connector.setPreparedStatementInt(2, patientId);
-//				Connector.setPreparedStatementDate(3, startDate);
-//				Connector.setPreparedStatementInt(4, wardId);
-//				Connector.setPreparedStatementString(5, bedId);
-//				Connector.setPreparedStatementDate(6, endDate);
-//				Connector.executeUpdatePreparedQuery();
-//				Connector.commit();
-//			}
-//	        else {
-//	        	throw new SQLException();
-//	        }
-//			System.out.println("Bed assigned Successfully");
-//
-//		} catch(SQLException e) {
-//			Connector.rollback();
-//			System.out.println("Error occured while processing the data" + e.getMessage());
-//		}
-//		Connector.setAutoCommit(true);
-//
-//	}
-	
-	
+
 	/**
 	 *  method to release a requested bed in the requested ward 
 	 * @param input
@@ -1098,7 +1020,7 @@ public class RegistrationStaff {
 			}
               
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1134,7 +1056,7 @@ public class RegistrationStaff {
                 System.out.println("Given staff doesn't exist");
             }
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1165,7 +1087,7 @@ public class RegistrationStaff {
             } else {
                 System.out.println("Given patient doesn't exist");
             }	  
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1210,7 +1132,7 @@ public class RegistrationStaff {
                     	// set auto commit to true
                     	Connector.setAutoCommit(true);
                     	System.out.println("Ward deleted successfully");
-                	} catch(SQLException e){
+                	} catch(Exception e){
                 		// handle exception
                 		// rollback  everything and set auto commit to true
                 		Connector.rollback();
@@ -1224,7 +1146,7 @@ public class RegistrationStaff {
             } else {
             	System.out.println("Given ward doesn't exist, try again!");
             }	  
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1284,7 +1206,7 @@ public class RegistrationStaff {
 				throw new SQLException();
 			System.out.println("Staff Registered Successfully with ID: "+ID);
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured while processing the data "+e.getMessage());
 		}	
 	}
@@ -1342,7 +1264,7 @@ public class RegistrationStaff {
 				throw new SQLException();
 			System.out.println("Patient Registered Successfully with ID : "+ID);
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured while processing the data "+e.getMessage());
 		}			
 	}
@@ -1362,7 +1284,7 @@ public class RegistrationStaff {
 				res = true;
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 		return res;
@@ -1383,7 +1305,7 @@ public class RegistrationStaff {
                 res = true;
             }
         }
-        catch(SQLException e) {
+        catch(Exception e) {
             System.out.println("Error occured, try again"+e.getMessage());
         }
         return res;
@@ -1435,7 +1357,7 @@ public class RegistrationStaff {
 			}
 			Connector.commit();
 			System.out.println("Ward "+ wardNo +" added Successfully");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			Connector.rollback();
 			System.out.println("Error occured while processing the data" + e.getMessage());
 		}
@@ -1551,7 +1473,7 @@ public class RegistrationStaff {
 				System.out.println("Incorrect Patient Id, retry");
 			}
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			Connector.rollback();   //rol-back in case of error
 			System.out.println("Error occured while processing the data" + e.getMessage());
             //e.printStackTrace(System.out);
@@ -1590,7 +1512,7 @@ public class RegistrationStaff {
 			}
 
 
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
@@ -1621,7 +1543,7 @@ public class RegistrationStaff {
 				System.out.format(leftAlignFormat,rs.getInt(1),rs.getInt(2),rs.getInt(3));
 
 			}
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
@@ -1659,7 +1581,7 @@ public class RegistrationStaff {
 
 			}
 
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}

@@ -38,7 +38,7 @@ public class Doctor {
 			case 4:
 				try {
 					RegistrationStaff.getMedicalRecordForPatientBetween(input);
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 			case 5:
@@ -125,10 +125,7 @@ public class Doctor {
 					System.out.println("Medical Record does not exist.Re-try");
 					Index.homePage(input);
 				}
-
-
 			}
-
 		}
 	}
 
@@ -153,7 +150,7 @@ public class Doctor {
 				Connector.executeUpdatePreparedQuery();
 				System.out.println("Medicine Added Successfully");
 			}
-			catch(SQLException e) {
+			catch(Exception e) {
 				System.out.println("Error occured while adding medicine data"+e.getMessage());
 			}
 		}
@@ -208,7 +205,7 @@ public class Doctor {
 				System.out.println("Medicine ID for the given Medical Record ID doesnt exist ");
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured while updating Medicine data"+e.getMessage());
 		}
 	}

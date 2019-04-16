@@ -32,7 +32,7 @@ public class Validation {
             ResultSet rs = Connector.executePreparedQuery();
             if(rs.next() )
                 return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
            System.out.println(e.getMessage());
     }
     return false;
