@@ -40,8 +40,8 @@ public class User {
 			Connector.createPreparedStatement(Constants.validatePatient);
 			execute(id);
 		}
-		catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
+		catch(Exception e) {
+			System.out.println("Error occurred, try again"+e.getMessage());
 		}
 		
 	}
@@ -55,7 +55,7 @@ public class User {
 			Connector.createPreparedStatement(Constants.validateDoctor);
 			execute(id);
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
@@ -69,7 +69,7 @@ public class User {
 			Connector.createPreparedStatement(Constants.validateRegistrationStaff);
 			execute(id);
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 		
@@ -89,7 +89,7 @@ public class User {
 				}
 				else
 					name = null;
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}

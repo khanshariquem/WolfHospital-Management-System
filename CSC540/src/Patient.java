@@ -5,7 +5,11 @@ import java.util.Scanner;
 
 
 public class Patient {
-	
+    /**
+     * Gives the user the menu to choose the options in accordance to his role of Patient
+     * @param input
+     * @return
+     */
 	public static void menu(Scanner input) {
 		while (true) {
 			System.out.println("Hi " + User.name + " , Welcome to WolfHospital Management System");
@@ -21,10 +25,8 @@ public class Patient {
 			case 1:
 			    try{
                     updatePatientDetails(input);
-                } catch (SQLException ex) {
+                } catch (Exception ex) {
                     System.out.println(ex.getMessage());
-                } catch (RegistrationStaff.InvalidChoice e) {
-                    System.out.println(e.getMessage());
                 }
 				break;
 			case 2:
@@ -47,6 +49,11 @@ public class Patient {
 		}
 	}
 
+    /**
+     * Use method to update patient details such as Name, Address, DOB, Gender, Phone, SSN
+     * @param input
+     * @return
+     */
     private static void updatePatientDetails(Scanner input) throws SQLException, RegistrationStaff.InvalidChoice {
         try {
             Connector.setAutoCommit(false);
@@ -83,29 +90,41 @@ public class Patient {
                         update.put("SSN", input.nextLine());
                         break;
                     default:
-                        throw new RegistrationStaff.InvalidChoice("Invalid menu option");
+                        throw new RegistrationStaff.InvalidChoice("Invalid menu option");  // Throws a custom exception if user chooses invalid menu option
                 }
             }
             String updateQuery = "";
-            for (String key : update.keySet()) {
+            for (String key : update.keySet()) {   // All update key, values are concatenated
                 updateQuery += key + " = '" + update.get(key) + "',";
             }
             String temp = Util.createUpdateStatement(updateQuery, User.id, Constants.updatePatientDetails);
             Connector.createPreparedStatement(temp);
-            Connector.executeUpdatePreparedQuery();
+            Connector.executeUpdatePreparedQuery();    // Executes update of all user selected fields
             System.out.println("Details updated Successfully");
-            Connector.commit();
-        } catch (SQLException e) {
-            Connector.rollback();
+            Connector.commit();    // Commits the transaction
+        } catch (Exception e) {
+            Connector.rollback();    //In case of error, the transaction is rollbacked
             System.out.println("Error occured while updating your details" + e.getMessage());
             //e.printStackTrace(System.out);
         }
-        Connector.setAutoCommit(true);
+        Connector.setAutoCommit(true);     // Auto commit enabled post transaction
     }
 
+    /**
+     * Use method to view medical record of a patient, also by a doctor for a particular patient
+     * @param input
+     * @return
+     */
     public static void viewMedicalRecord(Scanner input) {
-    	viewPatientMedicalRecord(input,Integer.parseInt(User.id));
-    }  
+        viewPatientMedicalRecord(input,Integer.parseInt(User.id));
+    }
+
+    /**
+     * Use method to view medical record of a patient given his id.
+     * @param input
+     * @param id
+     * @return
+     */
     public static void viewPatientMedicalRecord(Scanner input,int id) {
         try {
             Connector.createPreparedStatement(Constants.getMedicalRecordForPatient);
@@ -126,14 +145,15 @@ public class Patient {
                 System.out.format(leftAlignFormat,rs.getString(2),rs.getString(3),rs.getString(6),rs.getString( 7),rs.getString(8),rs.getString(9));
             }
             System.out.println();
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("Error occured, try again"+e.getMessage());
         }
     }
-    
-    
 
-
+    /**
+     * Use method to view billing record of a patient
+     * @return
+     */
     private static void viewBillingRecord() {
         try {
             Connector.createPreparedStatement(Constants.getBillingRecordsForPatient);
@@ -148,7 +168,7 @@ public class Patient {
                 System.out.format(leftAlignFormat,rs.getString(2),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10));
             }
             System.out.println();
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("Error occured, try again"+e.getMessage());
         }
     }

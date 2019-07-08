@@ -33,8 +33,8 @@ public class RegistrationStaff {
 			System.out.println("13. Assign a bed to patient");
 			System.out.println("14. Reserve a bed for patient");
 			System.out.println("15. Release a bed");
-			System.out.println("16. Create Billing Record");
-			System.out.println("17. Get ward Usage percentage");
+			System.out.println("16. Create Billing & Medical Record");
+			System.out.println("17. Get Ward Usage Percentage");
 			System.out.println("18. Get current patients for doctor ");
 			System.out.println("19. Get all staff information grouped by role");
             System.out.println("20. Get Patient Medical Record by MM/YYY");
@@ -58,7 +58,7 @@ public class RegistrationStaff {
 				try {
 
                     createNewWard(input);
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 				break;
@@ -68,53 +68,35 @@ public class RegistrationStaff {
 			case 4:
                 try {
                     updateStaffDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
 				break;
 			case 5:
                 try {
                     updateWardDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
 				break;
 			case 6:
                 try {
                     updatePatientDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
 				break;
             case 7:
                 try {
                     updateCheckInDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
             case 8:
                 try {
                     updateBRDetails(input);
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                } catch (InvalidID ex) {
-                    System.out.println(ex.getMessage());
-                } catch (InvalidChoice e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
@@ -132,8 +114,8 @@ public class RegistrationStaff {
 				break;
 			case 13:
 				try {
-					assignBed(input);
-				} catch (SQLException e) {
+					check_in(input);
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 				break;
@@ -146,7 +128,7 @@ public class RegistrationStaff {
 			case 16:
 				try {
 					createBillingRecord(input);
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println("Error occured while checking the bed availability, try again");
 				}
 				break;
@@ -162,14 +144,14 @@ public class RegistrationStaff {
 			case 20:
                 try {
                     getMedicalRecordForPatient(input);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
             case 21:
                 try {
                     getMedicalRecordForPatientBetween(input);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 break;
@@ -190,7 +172,7 @@ public class RegistrationStaff {
 			case 25:
 				try {
 					getPatientCount(input);
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 				break;
@@ -274,9 +256,9 @@ public class RegistrationStaff {
                 Connector.createPreparedStatement(temp);
                 Connector.executeUpdatePreparedQuery();     // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
-                Connector.commit(); // Commits the transaction
-            } catch (SQLException e) {
-                Connector.rollback(); //In case of error, the transaction is rollbacked
+                Connector.commit();   // Commits the transaction
+            } catch (Exception e) {
+                Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Staff details" + e.getMessage());
                 //e.printStackTrace(System.out);
             }
@@ -334,11 +316,11 @@ public class RegistrationStaff {
                             update.put("SSN", input.nextLine());
                             break;
                         case "7":
-                            System.out.println("Enter Processing_Treatment_Plan");
+                            System.out.println("Enter Processing Treatment Plan");
                             update.put("Processing_Treatment_Plan", input.nextLine());
                             break;
                         case "8":
-                            System.out.println("Enter Completing_Treatment (Yes/No)");
+                            System.out.println("Enter Completing Treatment (Yes/No)");
                             update.put("Completing_Treatment", input.nextLine());
                             break;
                         default:
@@ -355,7 +337,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();  // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
                 Connector.commit();  // Commits the transaction
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();  //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Patient details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -382,7 +364,7 @@ public class RegistrationStaff {
             try {
                 Connector.setAutoCommit(false);  //Auto commit disabled to implement update of all fields in one transaction
                 System.out.println("Choose fields to update (comma separate if multiple fields)");
-                System.out.println("1.Charges  2.Capacity  3.StaffID");
+                System.out.println("1.Charges  2.Responsible Nurse ID");
                 String choices = input.next();
                 input.nextLine();
                 String[] choice = choices.split(",");
@@ -394,17 +376,12 @@ public class RegistrationStaff {
                             update.put("Charges", input.nextLine());
                             break;
                         case "2":
-                            System.out.println("Enter Capacity");
-                            update.put("Capacity", input.nextLine());
-                            break;
-                        case "3":
-                            System.out.println("Enter StaffID"); // Validating if StaffID exists in Staff table; following referrential integrity constraint
+                            System.out.println("Enter Responsible Nurse ID"); // Validating if StaffID exists in Staff table; following referrential integrity constraint
                             String staffId = input.nextLine();
-                            Validation staffVal = new Validation("Staff", "StaffID", staffId);
-                            if(staffVal.validatePresence()) {
+                            if(validateNurse(Integer.parseInt(staffId))) {
                                 update.put("StaffID", staffId);
                             } else {
-                                throw new InvalidID("Invalid StaffId, transaction aborted");  //Throws a custom excepttion if StaffId is invalid, and aborts the transaction
+                                throw new InvalidID("Invalid NurseID, transaction aborted");  //Throws a custom excepttion if StaffId is invalid, and aborts the transaction
                             }
                             break;
                         default:
@@ -420,7 +397,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();   // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
                 Connector.commit();   // Commits the transaction
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating Ward details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -520,7 +497,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();    // Executes update of all user selected fields
                 System.out.println("Details updated Successfully");
                 Connector.commit();   // Commits the transaction
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();   //In case of error, the transaction is rollbacked
                 System.out.println("Error occured while updating details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -617,7 +594,7 @@ public class RegistrationStaff {
                 Connector.executeUpdatePreparedQuery();
                 System.out.println("Details updated Successfully");
                 Connector.commit();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Connector.rollback();
                 System.out.println("Error occured while updating details" + e.getMessage());
                 //e.printStackTrace(System.out);
@@ -638,17 +615,17 @@ public class RegistrationStaff {
 			Connector.createStatement();
 			ResultSet rs = Connector.executeQuery(Constants.getAllStaff);
 			
-			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-4s|      %-40s |      %-12s |      %-8s |      %-18s |          %-15s          |  %-18s                |%n";
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
-			System.out.format("| Staff ID  |  Name   |    DOB  |   Age   |   Address |    Phone   |    Gender  |       Professional Title    |   Job Title    |     Department       |%n");
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			String leftAlignFormat = "|       %-10s |    %-10s |    %-8s |     %-8s|      %-30s |      %-12s |      %-12s |      %-18s |          %-12s          |  %-12s                |%n";
+			System.out.format("+------------------+---------------+---------------+-------------+----------------------------+-------------------+-------------------------+-------------------------+----------------------+-----------------------+%n");
+			System.out.format("|    Staff ID      |  Name         |    DOB        |   Age       |            Address         |    Phone          |    Gender               |   Professional Title    |   Job Title          |     Department        |%n");
+			System.out.format("+------------------+---------------+---------------+-------------+----------------------------+-------------------+-------------------------+-------------------------+----------------------+-----------------------+%n");
 
 			while(rs.next()) {
 				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(4),Util.getAge(rs.getDate(4)),rs.getString(3),rs.getString(6),Util.getGender(rs.getString(7)),rs.getString(5),rs.getString(8),rs.getString(9));
 
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -673,17 +650,17 @@ public class RegistrationStaff {
 			Connector.createPreparedStatement(Constants.getActivePatientForDoctor);
 			Connector.setPreparedStatementInt(1, doctorID);
 			ResultSet rs = Connector.executePreparedQuery();
-			String leftAlignFormat = "|       %-10s |    %-8s |    %-8s |     %-4s|      %-40s |      %-12s |      %-8s |      %-18s |          %-5s          |  %-8s                |%n";
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
-			System.out.format("| Patient ID  |  Name   |    DOB  |   Age   |   Address |    Phone   |    Gender  |       SSN  |Processing Treatment Plan| Completing Treatment |%n");
-			System.out.format("+------------------+---------------+---------------+-------------+---------------+-------------------+-------------------------+-------------------------+-------------------------------+-----------+%n");
+			String leftAlignFormat = "|       %-10s |    %-12s |    %-8s |     %-8s|      %-28s |      %-12s |      %-8s |      %-18s |          %-5s          |  %-8s                |%n";
+			System.out.format("+------------------+------------------+---------------+-------------+-------------------------------+-------------------+-----------------+-------------------------+-------------------------+----------------------+%n");
+			System.out.format("| Patient ID       |  Name            |    DOB        |   Age       |            Address            |    Phone          |    Gender       |       SSN               |Processing Treatment Plan| Completing Treatment |%n");
+			System.out.format("+------------------+------------------+---------------+-------------+-------------------------------+-------------------+-----------------+-------------------------+-------------------------+----------------------+%n");
 
 			while(rs.next()) {
 				System.out.format(leftAlignFormat,rs.getString(1),rs.getString(2),rs.getString(3),Util.getAge(rs.getDate(3)),rs.getString(4),rs.getString(5),Util.getGender(rs.getString(6)),rs.getString(7),rs.getString(8),rs.getString(9));
 
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -708,7 +685,7 @@ public class RegistrationStaff {
 
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -727,7 +704,7 @@ public class RegistrationStaff {
 				System.out.println("Error occured. Try again.");
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -747,7 +724,7 @@ public class RegistrationStaff {
 				return (float) -1.0;
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 			return (float) -1.0;
 		}
@@ -782,7 +759,7 @@ public class RegistrationStaff {
 		try {
 			Connector.createPreparedStatement(Constants.checkBedAvailabilityBasedOnBedType);
 			int temp;
-			System.out.println("Enter Ward type:1-Bed (1) /2-Bed (2) /3-Bed (3)");
+			System.out.println("Enter Ward type:1-Bed (1) /2-Bed (2) /4-Bed (4)");
 			temp = input.nextInt();
 			Connector.setPreparedStatementInt(1, temp);
 			ResultSet rs = Connector.executePreparedQuery();
@@ -793,7 +770,7 @@ public class RegistrationStaff {
 				System.out.println("Error occured. Try again.");
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -817,7 +794,7 @@ public class RegistrationStaff {
 				System.out.println("Error occured. Try again.");
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again." + e.getMessage());
 		}
 	}
@@ -831,6 +808,7 @@ public class RegistrationStaff {
 	private static void reserveBed(Scanner input) {
 		try {
 			int temp;
+            displayBedAvail();
 			System.out.println("Enter Ward ID:");
 			temp = input.nextInt();
 			String bedId = null;
@@ -840,23 +818,39 @@ public class RegistrationStaff {
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
-            if(rs.next()) {
-            	// reserve bed
-            	Connector.createPreparedStatement(Constants.reserveBed);
-            	Connector.setPreparedStatementInt(1, temp);
-    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-                if(Connector.executeUpdatePreparedQuery() == 1)
-                	System.out.println("Bed reserved Successfully");
-                else {
-                	// fails if bed id is invalid
-                	System.out.println("Error occured, invalid Bed Id! try again");
-                }
-            } else {
-                System.out.println("Given ward doesn't exist");
-            }	  
+            // validate bed id
+            Connector.createPreparedStatement(Constants.validateBed);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet res =  Connector.executePreparedQuery();
+			// validate that the availability status of this bed is 'Y'
+			Connector.createPreparedStatement(Constants.validateBedAvailability);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet result =  Connector.executePreparedQuery();
+			if(result.next()) {
+				// if both bed id and ward no are valid
+				if(rs.next() && res.next()) {
+	            	// reserve bed
+	            	Connector.createPreparedStatement(Constants.reserveBed);
+	            	Connector.setPreparedStatementInt(1, temp);
+	    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+	    			
+	                if(Connector.executeUpdatePreparedQuery() == 1)
+	                	System.out.println("Bed reserved Successfully");
+	                else {
+	                	// fails if bed id is invalid
+	                	System.out.println("Error occured! try again");
+	                }
+	            } else {
+	                System.out.println("Given ward/Bed doesn't exist");
+	            }	 
+			} else {
+				System.out.println("Couldn't reserve bed! This bed is already taken");
+			} 
 		}
-		catch(SQLException e) {
-			System.out.println("Error occured, try again"+e.getMessage());
+		catch(Exception e) {
+			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
 	
@@ -968,7 +962,7 @@ public class RegistrationStaff {
 	                System.out.println("Given patient ID or Responsible doctor ID doesn't exist, try again!");
 	            }  
 			}
-	        catch(SQLException e) {
+	        catch(Exception e) {
 	        	// handle exceptions - perform rollback and set auto commit to true
 	 			Connector.rollback();
 	 			Connector.setAutoCommit(true);
@@ -976,71 +970,12 @@ public class RegistrationStaff {
 	 		}
 		}
 	}
-	
-	/**
-	 * Method to assign a bed to a patient
-	 * @param input
-	 * @throws SQLException
-	 */
-	private static void assignBed(Scanner input) throws SQLException{
-		try {
-			Connector.setAutoCommit(false);
-			Connector.createPreparedStatement(Constants.reserveBed);
-			int wardId;
-			System.out.println("Enter Ward ID:");
-			wardId = input.nextInt();
-			Connector.setPreparedStatementInt(1, wardId);
-			String bedId = null;
-			System.out.println("Enter Bed ID:");
-			bedId = input.next();
-			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-			System.out.println("Enter Patient ID:");
-			int patientId;
-			patientId = input.nextInt();
-			Date startDate = null;
-			Date endDate = null;
-			String temp = null;
-			try {
-				System.out.println("Enter Start Date(yyyy-mm-dd):");
-				temp = input.next();
-				startDate = Date.valueOf(temp);
-				System.out.println("Enter End Date(yyyy-mm-dd):");
-				temp = input.next();
-				endDate = Date.valueOf(temp);
-			} catch (Exception e) {
-				System.out.println("Invalid date, Try agian"+e.getMessage());
-				return ;
-			}
-			
-			if(Connector.executeUpdatePreparedQuery() == 1) {
-				Connector.createPreparedStatement(Constants.assignBed);
-				Connector.setPreparedStatementInt(1, Integer.parseInt(User.id));
-				Connector.setPreparedStatementInt(2, patientId);
-				Connector.setPreparedStatementDate(3, startDate);
-				Connector.setPreparedStatementInt(4, wardId);
-				Connector.setPreparedStatementString(5, bedId);
-				Connector.setPreparedStatementDate(6, endDate);
-				Connector.executeUpdatePreparedQuery();
-				Connector.commit();
-			}				
-	        else {
-	        	throw new SQLException();
-	        }	
-			System.out.println("Bed assigned Successfully");
-			
-		} catch(SQLException e) {
-			Connector.rollback();
-			System.out.println("Error occured while processing the data" + e.getMessage());
-		}
-		Connector.setAutoCommit(true);
-		
-	}
-	
-	
+
 	/**
 	 *  method to release a requested bed in the requested ward 
 	 * @param input
 	 */
+	
 	private static void releaseBed(Scanner input) {
 		try {
 			int temp;
@@ -1051,26 +986,41 @@ public class RegistrationStaff {
 			// read bed id
 			System.out.println("Enter Bed ID:");
 			bedId = input.next();			
-			// valdiate ward id
+			// validate ward id
 			Connector.createPreparedStatement(Constants.validateWard);
 			Connector.setPreparedStatementInt(1, temp);
             ResultSet rs =  Connector.executePreparedQuery();
-            if(rs.next()) {
-            	// release bed
-            	Connector.createPreparedStatement(Constants.releaseBed);
-            	Connector.setPreparedStatementInt(1, temp);
-    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
-                if(Connector.executeUpdatePreparedQuery() == 1)
-                	System.out.println("Bed released Successfully");
-                else {
-                	// failed due to invalid bed id
-                	System.out.println("Error occured, invalid Bed Id! try again");
-                }
-            } else {
-                System.out.println("Given ward doesn't exist");
-            }	  
+         // validate bed number
+            Connector.createPreparedStatement(Constants.validateBed);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet res =  Connector.executePreparedQuery();
+			// validate if this bed's status is 'Y" and there is no patient assigned to it currently
+			Connector.createPreparedStatement(Constants.validateBedAvail);
+        	Connector.setPreparedStatementInt(1, temp);
+			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+			ResultSet result =  Connector.executePreparedQuery();
+			if(result.next()) {
+				System.out.println("You cannot release this bed, it is already to a patient!");
+			} else {
+				if(rs.next() && res.next()) {
+	            	// release bed
+	            	Connector.createPreparedStatement(Constants.releaseBed);
+	            	Connector.setPreparedStatementInt(1, temp);
+	    			Connector.setPreparedStatementString(2, bedId.toUpperCase());
+	                if(Connector.executeUpdatePreparedQuery() == 1)
+	                	System.out.println("Bed released Successfully");
+	                else {
+	                	// failed due to invalid bed id
+	                	System.out.println("Error occured, invalid Bed Id! try again");
+	                }
+	            } else {
+	                System.out.println("Given ward/bed doesn't exist");
+	            }	
+			}
+              
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1106,7 +1056,7 @@ public class RegistrationStaff {
                 System.out.println("Given staff doesn't exist");
             }
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1137,7 +1087,7 @@ public class RegistrationStaff {
             } else {
                 System.out.println("Given patient doesn't exist");
             }	  
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1182,7 +1132,7 @@ public class RegistrationStaff {
                     	// set auto commit to true
                     	Connector.setAutoCommit(true);
                     	System.out.println("Ward deleted successfully");
-                	} catch(SQLException e){
+                	} catch(Exception e){
                 		// handle exception
                 		// rollback  everything and set auto commit to true
                 		Connector.rollback();
@@ -1196,7 +1146,7 @@ public class RegistrationStaff {
             } else {
             	System.out.println("Given ward doesn't exist, try again!");
             }	  
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again "+e.getMessage());
 		}	
 	}
@@ -1256,7 +1206,7 @@ public class RegistrationStaff {
 				throw new SQLException();
 			System.out.println("Staff Registered Successfully with ID: "+ID);
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured while processing the data "+e.getMessage());
 		}	
 	}
@@ -1334,11 +1284,32 @@ public class RegistrationStaff {
 				res = true;
 			}
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 		return res;
 	}
+
+    /**
+     * Method will validate if a doctor is present in the database
+     * @param id
+     * @return
+     */
+    public static boolean validateDoctor(int id) {
+        boolean res = false;
+        try {
+            Connector.createPreparedStatement(Constants.validateDoctor);
+            Connector.setPreparedStatementInt(1, id);
+            ResultSet result = Connector.executePreparedQuery();
+            if(result.next()) {
+                res = true;
+            }
+        }
+        catch(Exception e) {
+            System.out.println("Error occured, try again"+e.getMessage());
+        }
+        return res;
+    }
 	
 	/**
 	 * This method will create a new Ward based on user inputs
@@ -1386,7 +1357,7 @@ public class RegistrationStaff {
 			}
 			Connector.commit();
 			System.out.println("Ward "+ wardNo +" added Successfully");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			Connector.rollback();
 			System.out.println("Error occured while processing the data" + e.getMessage());
 		}
@@ -1502,7 +1473,7 @@ public class RegistrationStaff {
 				System.out.println("Incorrect Patient Id, retry");
 			}
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			Connector.rollback();   //rol-back in case of error
 			System.out.println("Error occured while processing the data" + e.getMessage());
             //e.printStackTrace(System.out);
@@ -1541,7 +1512,7 @@ public class RegistrationStaff {
 			}
 
 
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
@@ -1572,7 +1543,7 @@ public class RegistrationStaff {
 				System.out.format(leftAlignFormat,rs.getInt(1),rs.getInt(2),rs.getInt(3));
 
 			}
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
@@ -1610,7 +1581,7 @@ public class RegistrationStaff {
 
 			}
 
-		} catch(SQLException e) {
+		} catch(Exception e) {
 			System.out.println("Error occured, try again"+e.getMessage());
 		}
 	}
