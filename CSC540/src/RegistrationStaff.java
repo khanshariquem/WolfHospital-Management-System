@@ -1300,7 +1300,7 @@ public class RegistrationStaff {
 				temp = null;
 			Connector.setPreparedStatementString(6, temp);
 			int plan;
-			System.out.println("Enter Patient Address:");
+			System.out.println("Enter Patient Treatment Plan:");
 			plan = input.nextInt();
 			Connector.setPreparedStatementInt(7, plan);
 			Connector.setPreparedStatementString(8, "Yes");
@@ -1314,7 +1314,7 @@ public class RegistrationStaff {
 				throw new SQLException();
 			System.out.println("Patient Registered Successfully with ID : "+ID);
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			System.out.println("Error occured while processing the data "+e.getMessage());
 		}			
 	}
